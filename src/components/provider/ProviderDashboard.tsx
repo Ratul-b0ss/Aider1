@@ -1,7 +1,6 @@
 import React from 'react';
-import { TrendingUp, Users, Calendar, DollarSign, Clock, Star, CheckCircle2 } from 'lucide-react';
+import { TrendingUp, Users, Calendar, DollarSign, Clock, Star, CheckCircle2, ArrowUpRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Button } from '../ui/Button';
 import { Screen } from '../../types';
 
 interface ProviderDashboardProps {
@@ -9,118 +8,242 @@ interface ProviderDashboardProps {
 }
 
 const STATS = [
-  { label: 'Revenue', value: '$2,450', icon: DollarSign, color: 'text-green-500 bg-green-50', trend: '+12.5%' },
-  { label: 'Bookings', value: '48', icon: Calendar, color: 'text-blue-500 bg-blue-50', trend: '+8.2%' },
-  { label: 'Rating', value: '4.9', icon: Star, color: 'text-orange-500 bg-orange-50', trend: '0.0%' },
-  { label: 'Customers', value: '124', icon: Users, color: 'text-purple-500 bg-purple-50', trend: '+15.3%' },
+  { label: 'Revenue',   value: '$2,450', icon: DollarSign, bg: '#EEFAEF', color: '#16A34A', trend: '+12.5%', up: true },
+  { label: 'Bookings',  value: '48',     icon: Calendar,   bg: '#EEF6FF', color: '#2563EB', trend: '+8.2%',  up: true },
+  { label: 'Rating',    value: '4.9',    icon: Star,       bg: '#FFF4EC', color: '#EA580C', trend: '0.0%',   up: null },
+  { label: 'Customers', value: '124',    icon: Users,      bg: '#F3EFFF', color: '#7C3AED', trend: '+15.3%', up: true },
 ];
 
 const RECENT_BOOKINGS = [
-  { id: '1', customer: 'Alex Johnson', service: 'Deep Cleaning', time: 'Today, 2:00 PM', status: 'Pending', price: 45 },
-  { id: '2', customer: 'Sarah Miller', service: 'AC Repair', time: 'Tomorrow, 10:00 AM', status: 'Confirmed', price: 60 },
+  { id: '1', customer: 'Alex Johnson', service: 'Deep Cleaning',  time: 'Today, 2:00 PM',    status: 'Pending',   price: 45 },
+  { id: '2', customer: 'Sarah Miller', service: 'AC Repair',      time: 'Tomorrow, 10:00 AM', status: 'Confirmed', price: 60 },
 ];
+
+const statusStyle = {
+  Confirmed: { bg: '#EEFAEF', color: '#16A34A' },
+  Pending:   { bg: 'color-mix(in srgb, var(--color-primary) 12%, transparent)', color: 'var(--color-primary-hover)' },
+};
 
 export const ProviderDashboard = ({ onNavigate }: ProviderDashboardProps) => {
   return (
-    <div className="flex flex-col gap-fluid-xl px-fluid-lg py-fluid-lg pb-24">
-      {/* Header */}
-      <header className="flex flex-col justify-between gap-fluid-md md:flex-row md:items-end">
+    <div className="pb-28 pt-2" style={{ minHeight: '80vh' }}>
+
+      {/* ── Header ── */}
+      <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
         <div>
-          <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-primary">Business Overview</span>
-          <h1 className="text-fluid-3xl font-black tracking-tighter text-ink">Dashboard</h1>
+          <p className="text-xs font-semibold uppercase tracking-widest mb-1.5"
+            style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}>
+            Business Overview
+          </p>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight"
+            style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+            Dashboard
+          </h1>
         </div>
-        <div className="flex gap-4">
-          <Button variant="outline" size="sm">Download Report</Button>
-          <Button size="sm">Add Service</Button>
+        <div className="flex gap-3">
+          <button
+            className="px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+            style={{
+              border: '1.5px solid var(--color-border)',
+              color: 'var(--color-ink)',
+              fontFamily: 'var(--font-display)',
+              background: 'var(--color-surface)',
+            }}
+          >
+            Download Report
+          </button>
+          <button
+            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+            style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+          >
+            + Add Service
+          </button>
         </div>
       </header>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-fluid-md lg:grid-cols-4">
+      {/* ── Stats Grid ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {STATS.map((stat, idx) => (
           <motion.div
             key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
-            className="card-premium group p-fluid-md hover:border-primary"
+            transition={{ duration: 0.35, delay: idx * 0.07, ease: [0.16, 1, 0.3, 1] }}
+            className="p-5 rounded-2xl"
+            style={{
+              background: stat.bg,
+              border: `1px solid ${stat.color}20`,
+            }}
           >
-            <div className="mb-fluid-md flex items-start justify-between">
-              <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${stat.color}`}>
-                <stat.icon size={20} />
+            <div className="flex items-center justify-between mb-4">
+              <div
+                className="h-9 w-9 rounded-xl flex items-center justify-center"
+                style={{ background: stat.color + '18' }}
+              >
+                <stat.icon size={18} style={{ color: stat.color }} strokeWidth={1.8} />
               </div>
-              <span className={`text-[10px] font-black uppercase tracking-widest ${stat.trend.startsWith('+') ? 'text-emerald-500' : 'text-ink-muted'}`}>
-                {stat.trend}
+              <span
+                className="text-[11px] font-semibold px-2 py-1 rounded-lg"
+                style={{
+                  background: stat.up === true ? '#EEFAEF' : stat.up === false ? '#FEF2F2' : 'rgba(0,0,0,0.06)',
+                  color: stat.up === true ? '#16A34A' : stat.up === false ? '#DC2626' : 'var(--color-ink-muted)',
+                  fontFamily: 'var(--font-display)',
+                }}
+              >
+                {stat.up === true && '↑ '}{stat.trend}
               </span>
             </div>
-            <h3 className="mb-1 text-fluid-2xl font-black text-ink">{stat.value}</h3>
-            <p className="text-[10px] font-black uppercase tracking-widest text-ink-muted">{stat.label}</p>
+            <p className="text-2xl font-extrabold" style={{ color: stat.color, fontFamily: 'var(--font-display)' }}>
+              {stat.value}
+            </p>
+            <p className="text-xs font-medium mt-1" style={{ color: stat.color, fontFamily: 'var(--font-display)', opacity: 0.7 }}>
+              {stat.label}
+            </p>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-fluid-xl lg:grid-cols-3">
+      {/* ── Main Content ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
         {/* Recent Bookings */}
-        <div className="flex flex-col gap-fluid-md lg:col-span-2">
-          <div className="flex items-end justify-between">
-            <h2 className="text-fluid-xl font-black tracking-tight text-ink">Recent Bookings</h2>
-            <button className="text-[10px] font-black uppercase tracking-widest text-ink-muted transition-colors hover:text-primary">
-              View Schedule
+        <div className="lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+              Recent Bookings
+            </h2>
+            <button
+              className="flex items-center gap-1.5 text-sm font-semibold transition-colors"
+              style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}
+            >
+              View All <ArrowUpRight size={15} />
             </button>
           </div>
-          <div className="card-premium overflow-hidden p-0">
-            {RECENT_BOOKINGS.map((booking, idx) => (
-              <div 
-                key={booking.id}
-                className={`flex flex-col items-center justify-between gap-fluid-md p-fluid-md transition-all hover:bg-background-light md:flex-row ${
-                  idx !== RECENT_BOOKINGS.length - 1 ? 'border-b border-border' : ''
-                }`}
-              >
-                <div className="flex items-center gap-fluid-md">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-                    <Calendar size={24} className="text-primary" />
+
+          <div
+            className="rounded-2xl overflow-hidden"
+            style={{
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              boxShadow: 'var(--shadow-xs)',
+            }}
+          >
+            {RECENT_BOOKINGS.map((booking, idx) => {
+              const ss = statusStyle[booking.status as keyof typeof statusStyle];
+              return (
+                <div
+                  key={booking.id}
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 transition-colors hover:bg-[var(--color-neutral-50)]"
+                  style={{
+                    borderBottom: idx < RECENT_BOOKINGS.length - 1 ? '1px solid var(--color-border)' : 'none',
+                  }}
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div
+                      className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ background: 'var(--color-primary-light)' }}
+                    >
+                      <Calendar size={19} style={{ color: 'var(--color-primary-hover)' }} strokeWidth={2} />
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-semibold truncate" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+                        {booking.service}
+                      </h4>
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--color-ink-muted)' }}>
+                        {booking.customer}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="mb-1 text-fluid-lg font-black text-ink">{booking.service}</h4>
-                    <p className="text-sm font-bold text-ink-muted">Customer: {booking.customer}</p>
+
+                  <div className="flex items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+                    <div className="flex items-center gap-1.5" style={{ color: 'var(--color-ink-muted)' }}>
+                      <Clock size={13} strokeWidth={2} />
+                      <span className="text-xs font-medium" style={{ fontFamily: 'var(--font-display)' }}>{booking.time}</span>
+                    </div>
+                    <div
+                      className="px-3 py-1.5 rounded-lg text-xs font-semibold"
+                      style={{ background: ss.bg, color: ss.color, fontFamily: 'var(--font-display)' }}
+                    >
+                      {booking.status}
+                    </div>
+                    <span className="text-base font-extrabold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+                      ${booking.price}
+                    </span>
+                    <button
+                      className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all"
+                      style={{
+                        border: '1.5px solid var(--color-border)',
+                        color: 'var(--color-ink)',
+                        fontFamily: 'var(--font-display)',
+                      }}
+                    >
+                      Manage
+                    </button>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 md:items-end">
-                  <div className="flex items-center gap-2 text-ink-muted">
-                    <Clock size={14} />
-                    <span className="text-[10px] font-black uppercase tracking-widest">{booking.time}</span>
-                  </div>
-                  <div className={`rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest ${
-                    booking.status === 'Confirmed' ? 'bg-emerald-50 text-emerald-600' : 'bg-primary/10 text-primary'
-                  }`}>
-                    {booking.status}
-                  </div>
-                </div>
-                <div className="flex items-center gap-fluid-md">
-                  <span className="text-fluid-xl font-black text-ink">${booking.price}</span>
-                  <Button variant="outline" size="sm">Manage</Button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        {/* Quick Actions / Tips */}
-        <div className="flex flex-col gap-fluid-md">
-          <h2 className="text-fluid-xl font-black tracking-tight text-ink">Quick Actions</h2>
-          <div className="flex flex-col gap-fluid-md">
-            <button className="group relative overflow-hidden rounded-[40px] bg-ink p-fluid-lg text-left transition-all hover:scale-[1.02]">
-              <div className="absolute right-0 top-0 -mr-16 -mt-16 h-32 w-32 rounded-full bg-primary/20 blur-[40px]"></div>
-              <div className="relative z-10">
-                <TrendingUp className="mb-4 text-primary" size={32} />
-                <h4 className="mb-2 text-fluid-lg font-black text-white">Boost Visibility</h4>
-                <p className="text-sm font-medium leading-relaxed text-white/60">Promote your services to reach more customers in your area.</p>
+        {/* Quick Actions */}
+        <div className="flex flex-col gap-4">
+          <h2 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+            Quick Actions
+          </h2>
+
+          {/* Boost card */}
+          <div
+            className="rounded-2xl p-6 relative overflow-hidden cursor-pointer group transition-all hover:-translate-y-0.5"
+            style={{
+              background: 'linear-gradient(140deg, var(--color-deep) 0%, #005840 100%)',
+              boxShadow: 'var(--shadow-lg)',
+            }}
+          >
+            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full pointer-events-none"
+              style={{ background: 'rgba(132,183,1,0.12)', filter: 'blur(20px)' }} />
+            <div className="relative z-10">
+              <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: 'rgba(132,183,1,0.2)' }}>
+                <TrendingUp size={20} style={{ color: 'var(--color-primary)' }} strokeWidth={2} />
               </div>
-            </button>
-            <div className="card-premium p-fluid-lg">
-              <CheckCircle2 className="mb-4 text-emerald-500" size={32} />
-              <h4 className="mb-2 text-fluid-lg font-black text-ink">Profile Complete</h4>
-              <p className="text-sm font-bold leading-relaxed text-ink-muted">Your business profile is 100% complete. You're ready to grow!</p>
+              <h4 className="text-base font-bold text-white mb-1.5" style={{ fontFamily: 'var(--font-display)' }}>
+                Boost Visibility
+              </h4>
+              <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                Promote your services to reach more customers.
+              </p>
+              <button
+                className="mt-4 flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}
+              >
+                Learn more <ArrowUpRight size={13} />
+              </button>
+            </div>
+          </div>
+
+          {/* Complete card */}
+          <div
+            className="rounded-2xl p-6"
+            style={{
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              boxShadow: 'var(--shadow-xs)',
+            }}
+          >
+            <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-4"
+              style={{ background: '#EEFAEF' }}>
+              <CheckCircle2 size={20} style={{ color: '#16A34A' }} strokeWidth={2} />
+            </div>
+            <h4 className="text-base font-bold mb-1.5" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+              Profile Complete
+            </h4>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-ink-muted)' }}>
+              Your business profile is 100% complete. You're ready to grow!
+            </p>
+            {/* Progress bar */}
+            <div className="mt-4 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--color-neutral-100)' }}>
+              <div className="h-full rounded-full w-full" style={{ background: '#16A34A' }} />
             </div>
           </div>
         </div>

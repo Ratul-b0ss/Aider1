@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin } from 'lucide-react';
+import { Calendar, Clock, MapPin, ChevronRight, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button } from '../ui/Button';
 import { Screen } from '../../types';
 
 interface BookingsProps {
@@ -19,7 +18,7 @@ const BOOKINGS = [
     price: 45,
     image: 'https://picsum.photos/seed/cleaning/200/200',
     address: '123 Luxury Ave, Suite 405',
-    type: 'Upcoming'
+    type: 'Upcoming',
   },
   {
     id: '2',
@@ -31,142 +30,226 @@ const BOOKINGS = [
     price: 60,
     image: 'https://picsum.photos/seed/ac/200/200',
     address: '456 Business Rd, Office 12',
-    type: 'Completed'
+    type: 'Completed',
   },
 ];
 
+const statusStyle = {
+  Upcoming:  { bg: 'color-mix(in srgb, var(--color-primary) 12%, transparent)', color: 'var(--color-primary-hover)' },
+  Completed: { bg: '#EEFAEF', color: '#16A34A' },
+};
+
 export const Bookings = ({ onNavigate }: BookingsProps) => {
   const [activeTab, setActiveTab] = useState<'Upcoming' | 'Completed'>('Upcoming');
-
-  const filteredBookings = BOOKINGS.filter(b => b.type === activeTab);
+  const filteredBookings = BOOKINGS.filter((b) => b.type === activeTab);
 
   return (
-    <div className="flex flex-col gap-fluid-xl px-fluid-lg py-fluid-lg pb-24">
-      {/* Header */}
-      <header>
-        <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-primary">My Schedule</span>
-        <h1 className="text-fluid-3xl font-black tracking-tighter text-ink">Bookings</h1>
+    <div className="pb-28 pt-2" style={{ minHeight: '80vh' }}>
+
+      {/* ── Header ── */}
+      <header className="mb-8">
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1.5"
+          style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}>
+          My Schedule
+        </p>
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight"
+          style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+          Bookings
+        </h1>
       </header>
 
-      {/* Tabs */}
-      <div className="flex w-full max-w-md gap-1 rounded-2xl bg-border p-1">
-        {(['Upcoming', 'Completed'] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 rounded-xl py-3 text-[10px] font-black uppercase tracking-widest transition-all ${
-              activeTab === tab
-                ? 'bg-white text-ink shadow-sm'
-                : 'text-ink-muted hover:text-ink'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+      {/* ── Tabs ── */}
+      <div
+        className="inline-flex gap-1 p-1 rounded-xl mb-8"
+        style={{ background: 'var(--color-neutral-100)', border: '1px solid var(--color-border)' }}
+      >
+        {(['Upcoming', 'Completed'] as const).map((tab) => {
+          const active = activeTab === tab;
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className="px-6 py-2.5 rounded-lg text-sm font-semibold transition-all"
+              style={{
+                fontFamily: 'var(--font-display)',
+                background: active ? 'var(--color-surface)' : 'transparent',
+                color: active ? 'var(--color-ink)' : 'var(--color-ink-muted)',
+                boxShadow: active ? 'var(--shadow-sm)' : 'none',
+              }}
+            >
+              {tab}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Bookings List */}
-      <div className="auto-grid">
+      {/* ── Booking Cards ── */}
+      <div className="flex flex-col gap-5">
         <AnimatePresence mode="popLayout">
-          {filteredBookings.map((booking, idx) => (
-            <motion.div
-              key={booking.id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ delay: idx * 0.1 }}
-              className="card-premium group p-fluid-md hover:border-primary"
-            >
-              <div className="flex flex-col gap-fluid-md md:flex-row">
-                <div className="h-32 w-full shrink-0 overflow-hidden rounded-2xl md:w-32">
-                  <img 
-                    src={booking.image} 
-                    alt={booking.service} 
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-
-                <div className="flex flex-1 flex-col justify-between">
-                  <div className="mb-4 flex items-start justify-between">
-                    <div>
-                      <h3 className="mb-1 text-fluid-lg font-black leading-tight text-ink">{booking.service}</h3>
-                      <p className="text-sm font-bold text-ink-muted">by {booking.provider}</p>
-                    </div>
-                    <div className={`rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest ${
-                      booking.status === 'Upcoming' 
-                        ? 'bg-primary/10 text-primary' 
-                        : 'bg-emerald-50 text-emerald-600'
-                    }`}>
-                      {booking.status}
-                    </div>
+          {filteredBookings.map((booking, idx) => {
+            const ss = statusStyle[booking.status as keyof typeof statusStyle];
+            return (
+              <motion.div
+                key={booking.id}
+                layout
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97 }}
+                transition={{ duration: 0.3, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                className="rounded-2xl overflow-hidden"
+                style={{
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                <div className="flex flex-col md:flex-row gap-0">
+                  {/* Image */}
+                  <div className="relative md:w-44 h-44 md:h-auto shrink-0 overflow-hidden">
+                    <img
+                      src={booking.image}
+                      alt={booking.service}
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
                   </div>
 
-                  <div className="grid grid-cols-1 gap-fluid-sm sm:grid-cols-3">
-                    <div className="flex items-center gap-3 text-ink-muted">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-background-light">
-                        <Calendar size={18} />
+                  {/* Content */}
+                  <div className="flex flex-1 flex-col justify-between p-5 gap-4">
+                    {/* Top row */}
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <h3
+                          className="text-base font-semibold leading-snug"
+                          style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}
+                        >
+                          {booking.service}
+                        </h3>
+                        <p className="text-sm mt-0.5" style={{ color: 'var(--color-ink-muted)' }}>
+                          by {booking.provider}
+                        </p>
                       </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest">{booking.date}</span>
+                      <div
+                        className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold"
+                        style={{ background: ss.bg, color: ss.color, fontFamily: 'var(--font-display)' }}
+                      >
+                        {booking.status}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3 text-ink-muted">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-background-light">
-                        <Clock size={18} />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest">{booking.time}</span>
+
+                    {/* Meta info */}
+                    <div className="flex flex-wrap gap-x-6 gap-y-2">
+                      {[
+                        { icon: Calendar, text: booking.date },
+                        { icon: Clock,    text: booking.time },
+                        { icon: MapPin,   text: booking.address },
+                      ].map(({ icon: Icon, text }) => (
+                        <div key={text} className="flex items-center gap-2">
+                          <div
+                            className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0"
+                            style={{ background: 'var(--color-neutral-100)' }}
+                          >
+                            <Icon size={14} style={{ color: 'var(--color-ink-muted)' }} strokeWidth={2} />
+                          </div>
+                          <span className="text-xs font-medium" style={{ color: 'var(--color-ink-muted)' }}>{text}</span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex items-center gap-3 text-ink-muted">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-background-light">
-                        <MapPin size={18} />
+
+                    {/* Bottom row */}
+                    <div
+                      className="flex items-center justify-between pt-4 gap-4 flex-wrap"
+                      style={{ borderTop: '1px solid var(--color-border)' }}
+                    >
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-extrabold"
+                          style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+                          ${booking.price}
+                        </span>
+                        <span className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>total</span>
                       </div>
-                      <span className="truncate text-[10px] font-black uppercase tracking-widest">{booking.address}</span>
+
+                      <div className="flex gap-2.5">
+                        {booking.status === 'Upcoming' ? (
+                          <>
+                            <button
+                              className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                              style={{
+                                border: '1.5px solid var(--color-border)',
+                                color: 'var(--color-ink)',
+                                fontFamily: 'var(--font-display)',
+                              }}
+                            >
+                              Reschedule
+                            </button>
+                            <button
+                              className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+                              style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+                            >
+                              Contact Pro
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                              style={{
+                                border: '1.5px solid var(--color-border)',
+                                color: 'var(--color-ink)',
+                                fontFamily: 'var(--font-display)',
+                              }}
+                            >
+                              Invoice
+                            </button>
+                            <button
+                              className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+                              style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+                            >
+                              Book Again
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-fluid-md flex flex-col items-center justify-between border-t border-border pt-fluid-md gap-fluid-md md:flex-row">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-fluid-2xl font-black text-ink">${booking.price}</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-ink-muted">Total Price</span>
-                </div>
-                
-                <div className="flex w-full gap-4 md:w-auto">
-                  {booking.status === 'Upcoming' ? (
-                    <>
-                      <Button variant="outline" size="sm" className="flex-1 md:flex-none">Reschedule</Button>
-                      <Button size="sm" className="flex-1 md:flex-none">Contact Pro</Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button variant="outline" size="sm" className="flex-1 md:flex-none">Download Invoice</Button>
-                      <Button size="sm" className="flex-1 md:flex-none">Book Again</Button>
-                    </>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
-
-        {filteredBookings.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-background-light">
-              <Calendar size={40} className="text-ink-muted/20" />
-            </div>
-            <h3 className="mb-2 text-fluid-xl font-black text-ink">No {activeTab.toLowerCase()} bookings</h3>
-            <p className="font-bold text-ink-muted">Your schedule looks clear for now.</p>
-            <Button 
-              variant="outline" 
-              className="mt-8"
-              onClick={() => onNavigate('services')}
-            >
-              Explore Services
-            </Button>
-          </div>
-        )}
       </div>
+
+      {/* ── Empty State ── */}
+      {filteredBookings.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div
+            className="h-20 w-20 rounded-2xl flex items-center justify-center mb-6"
+            style={{ background: 'var(--color-neutral-100)' }}
+          >
+            <Calendar size={32} style={{ color: 'var(--color-neutral-400)' }} strokeWidth={1.5} />
+          </div>
+          <h3
+            className="text-xl font-bold mb-2"
+            style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}
+          >
+            No {activeTab.toLowerCase()} bookings
+          </h3>
+          <p className="text-sm mb-8" style={{ color: 'var(--color-ink-muted)' }}>
+            Your schedule looks clear for now.
+          </p>
+          <button
+            onClick={() => onNavigate('services')}
+            className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
+            style={{
+              background: 'var(--color-deep)',
+              color: '#fff',
+              fontFamily: 'var(--font-display)',
+            }}
+          >
+            Explore Services <ChevronRight size={15} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
