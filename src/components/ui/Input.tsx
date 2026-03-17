@@ -12,7 +12,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full flex flex-col gap-1.5">
         {label && (
-          <label className="text-[10px] font-black text-deep-moss/40 uppercase tracking-[0.2em] px-4">
+          <label
+            className="text-xs font-semibold px-1"
+            style={{ color: 'var(--color-ink-muted)', fontFamily: 'var(--font-display)' }}
+          >
             {label}
           </label>
         )}
@@ -20,21 +23,36 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={cn(
-              'w-full px-6 py-4 bg-white border-2 border-deep-moss/5 rounded-2xl font-bold text-deep-moss outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-deep-moss/20',
-              error && 'border-red-500 focus:border-red-500 focus:ring-red-500/10',
-              icon && 'pr-14',
+              'w-full px-4 py-3 text-sm font-medium rounded-xl outline-none transition-all',
+              'placeholder:text-[var(--color-neutral-400)]',
+              error
+                ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/15'
+                : 'border-[var(--color-border)] focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/12',
+              icon && 'pr-12',
               className
             )}
+            style={{
+              background: 'var(--color-neutral-50)',
+              border: `1.5px solid ${error ? '#f87171' : 'var(--color-border)'}`,
+              color: 'var(--color-ink)',
+              fontFamily: 'var(--font-sans)',
+            }}
             {...props}
           />
           {icon && (
-            <div className="absolute right-5 top-1/2 -translate-y-1/2 text-deep-moss/30 group-focus-within:text-primary transition-colors pointer-events-none">
+            <div
+              className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors"
+              style={{ color: 'var(--color-neutral-400)' }}
+            >
               {icon}
             </div>
           )}
         </div>
         {error && (
-          <span className="text-[10px] text-red-500 font-bold uppercase tracking-widest px-4 animate-in fade-in slide-in-from-top-1">
+          <span
+            className="text-xs px-1"
+            style={{ color: '#DC2626', fontFamily: 'var(--font-display)' }}
+          >
             {error}
           </span>
         )}

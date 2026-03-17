@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Leaf, Zap, Bell, Home as HomeIcon, LayoutGrid, Calendar, User, BarChart3, Package, Menu, X } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Home as HomeIcon, LayoutGrid, Calendar, User, BarChart3, Package, Bell, Menu, X, ChevronDown } from 'lucide-react';
 import { Screen, UserType } from '../../types';
 
 interface NavbarProps {
@@ -15,146 +14,245 @@ export const Navbar = ({ active, onChange, userType, isAuthenticated }: NavbarPr
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const customerTabs = [
-    { id: 'home', label: 'Home', icon: HomeIcon },
+    { id: 'home',     label: 'Home',     icon: HomeIcon },
     { id: 'services', label: 'Services', icon: LayoutGrid },
     { id: 'bookings', label: 'Bookings', icon: Calendar },
-    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'profile',  label: 'Profile',  icon: User },
   ];
 
   const providerTabs = [
     { id: 'provider-dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'provider-bookings', label: 'Bookings', icon: Calendar },
-    { id: 'provider-services', label: 'Services', icon: Package },
-    { id: 'provider-profile', label: 'Profile', icon: User },
+    { id: 'provider-bookings',  label: 'Bookings',  icon: Calendar },
+    { id: 'provider-services',  label: 'Services',  icon: Package },
+    { id: 'provider-profile',   label: 'Profile',   icon: User },
   ];
 
   const tabs = userType === 'customer' ? customerTabs : providerTabs;
 
-  const handleNavClick = (screen: Screen | string) => {
+  const handleNavClick = (screen: string) => {
     onChange(screen as Screen);
     setMobileMenuOpen(false);
   };
 
-  return (
-    <nav className={`z-50 border-b border-border bg-white transition-all ${scrolled ? 'py-3 shadow-sm' : 'py-4 md:py-5'}`}>
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-fluid-md">
-        {/* Logo */}
-        <div 
-          className="flex cursor-pointer items-center gap-1" 
-          onClick={() => handleNavClick(userType === 'customer' ? 'home' : 'provider-dashboard')}
-        >
-          <span className="text-[clamp(1.5rem,3vw,2rem)] font-black tracking-tighter text-deep-moss">AIDER</span>
-          <span className="text-[clamp(1.5rem,3vw,2rem)] font-black text-primary">.</span>
-        </div>
-        
-        {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center gap-8">
-          {isAuthenticated ? tabs.map((tab) => {
-            const isActive = active === tab.id || (tab.id === 'profile' && active === 'settings') || (tab.id === 'provider-profile' && active === 'settings');
-            return (
-              <button
-                key={tab.id}
-                onClick={() => handleNavClick(tab.id)}
-                className={`flex items-center gap-2 text-[clamp(0.875rem,1.5vw,1rem)] font-bold transition-all hover:text-deep-moss ${isActive ? 'text-deep-moss' : 'text-gray-600'}`}
-              >
-                <tab.icon size={16} />
-                {tab.label}
-              </button>
-            );
-          }) : (
-            <>
-              <button onClick={() => handleNavClick('services')} className="text-[clamp(0.875rem,1.5vw,1rem)] font-bold text-gray-800 hover:text-deep-moss transition-colors">Services</button>
-              <button className="text-[clamp(0.875rem,1.5vw,1rem)] font-bold text-gray-800 hover:text-deep-moss transition-colors">How It Works</button>
-              <button onClick={() => handleNavClick('signup')} className="text-[clamp(0.875rem,1.5vw,1rem)] font-bold text-gray-800 hover:text-deep-moss transition-colors">Become a Provider</button>
-            </>
-          )}
-        </div>
+  const isTabActive = (tabId: string) =>
+    active === tabId ||
+    (tabId === 'profile' && active === 'settings') ||
+    (tabId === 'provider-profile' && active === 'settings');
 
-        {/* Actions */}
-        <div className="flex items-center gap-3 md:gap-4">
-          {isAuthenticated ? (
-            <>
-              <button className="relative hidden md:block rounded-full p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-deep-moss">
-                <Bell size={20} />
-                <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary"></span>
-              </button>
-              <button 
-                onClick={() => handleNavClick('profile')}
-                className="hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-deep-moss text-sm font-bold text-white transition-transform hover:scale-105"
-              >
-                {userType === 'customer' ? 'JD' : 'SP'}
-              </button>
-            </>
-          ) : (
-            <>
-              <button 
-                onClick={() => handleNavClick('login')}
-                className="hidden md:block text-[clamp(0.875rem,1.5vw,1rem)] font-bold text-deep-moss hover:text-deep-moss-dark transition-colors px-4"
-              >
-                Log In
-              </button>
-              <button 
-                onClick={() => handleNavClick('signup')}
-                className="hidden md:block rounded-xl bg-deep-moss px-4 py-2 md:px-6 md:py-2.5 text-[clamp(0.875rem,1.5vw,1rem)] font-bold text-white transition-all hover:bg-deep-moss-dark hover:shadow-md"
-              >
-                Sign Up
-              </button>
-              <button 
-                onClick={() => handleNavClick('signup')}
-                className="hidden md:block rounded-xl border-2 border-deep-moss px-6 py-2 text-[clamp(0.875rem,1.5vw,1rem)] font-bold text-deep-moss transition-all hover:bg-deep-moss hover:text-white"
-              >
-                Post a Job
-              </button>
-            </>
-          )}
-          
-          {/* Mobile Menu Toggle (Only for unauthenticated users, auth users use BottomNav) */}
-          {!isAuthenticated && (
-            <button 
-              className="md:hidden p-2 text-deep-moss"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+  return (
+    <>
+      <nav
+        className={`
+          relative z-50 w-full transition-all duration-300
+          ${scrolled
+            ? 'bg-white/90 backdrop-blur-xl shadow-sm border-b border-[var(--color-border)]'
+            : 'bg-white border-b border-[var(--color-border)]'
+          }
+        `}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 md:px-8"
+          style={{ height: scrolled ? '60px' : '68px', transition: 'height 0.3s ease' }}
+        >
+          {/* ── Logo ── */}
+          <button
+            onClick={() => handleNavClick(userType === 'customer' ? 'home' : 'provider-dashboard')}
+            className="flex items-center gap-0.5 group outline-none"
+            aria-label="Go to home"
+          >
+            <span
+              className="font-display text-[1.5rem] font-extrabold tracking-tight leading-none"
+              style={{ color: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
             >
-              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              AIDER
+            </span>
+            <span
+              className="text-[1.5rem] font-extrabold leading-none"
+              style={{ color: 'var(--color-primary)' }}
+            >
+              .
+            </span>
+          </button>
+
+          {/* ── Desktop Nav Links ── */}
+          <div className="hidden md:flex items-center gap-1">
+            {isAuthenticated
+              ? tabs.map((tab) => {
+                  const active_ = isTabActive(tab.id);
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => handleNavClick(tab.id)}
+                      className={`
+                        flex items-center gap-2 px-4 py-2 rounded-xl text-[0.875rem] font-semibold
+                        transition-all duration-150
+                        ${active_
+                          ? 'bg-[var(--color-primary-light)] text-[var(--color-deep)]'
+                          : 'text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)]'
+                        }
+                      `}
+                      style={{ fontFamily: 'var(--font-display)' }}
+                    >
+                      <tab.icon size={15} strokeWidth={active_ ? 2.5 : 2} />
+                      {tab.label}
+                    </button>
+                  );
+                })
+              : (
+                <>
+                  <button
+                    onClick={() => handleNavClick('services')}
+                    className="px-4 py-2 rounded-xl text-[0.875rem] font-semibold text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    Services
+                  </button>
+                  <button
+                    className="px-4 py-2 rounded-xl text-[0.875rem] font-semibold text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    How It Works
+                  </button>
+                  <button
+                    onClick={() => handleNavClick('signup')}
+                    className="px-4 py-2 rounded-xl text-[0.875rem] font-semibold text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    Become a Provider
+                  </button>
+                </>
+              )
+            }
+          </div>
+
+          {/* ── Desktop Actions ── */}
+          <div className="hidden md:flex items-center gap-3">
+            {isAuthenticated ? (
+              <>
+                {/* Notification Bell */}
+                <button
+                  className="relative h-9 w-9 flex items-center justify-center rounded-xl text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
+                  aria-label="Notifications"
+                >
+                  <Bell size={18} strokeWidth={2} />
+                  <span
+                    className="absolute right-2 top-2 h-2 w-2 rounded-full"
+                    style={{ background: 'var(--color-primary)' }}
+                  />
+                </button>
+
+                {/* Avatar */}
+                <button
+                  onClick={() => handleNavClick(userType === 'customer' ? 'profile' : 'provider-profile')}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl text-[0.8125rem] font-bold text-white transition-all hover:opacity-90 hover:shadow-md"
+                  style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+                  aria-label="Profile"
+                >
+                  {userType === 'customer' ? 'JD' : 'SP'}
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => handleNavClick('login')}
+                  className="px-4 py-2 text-[0.875rem] font-semibold transition-colors"
+                  style={{ color: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => handleNavClick('signup')}
+                  className="px-5 py-2 rounded-xl text-[0.875rem] font-semibold text-white transition-all hover:opacity-90 hover:shadow-md"
+                  style={{
+                    background: 'var(--color-deep)',
+                    fontFamily: 'var(--font-display)',
+                  }}
+                >
+                  Get Started
+                </button>
+                <button
+                  onClick={() => handleNavClick('signup')}
+                  className="px-5 py-2 rounded-xl text-[0.875rem] font-semibold transition-all hover:shadow-sm"
+                  style={{
+                    border: '1.5px solid var(--color-primary)',
+                    color: 'var(--color-primary)',
+                    fontFamily: 'var(--font-display)',
+                  }}
+                >
+                  Post a Job
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* ── Mobile Hamburger (unauthenticated only) ── */}
+          {!isAuthenticated && (
+            <button
+              className="md:hidden h-9 w-9 flex items-center justify-center rounded-xl text-[var(--color-deep)] hover:bg-[var(--color-neutral-50)] transition-all"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           )}
         </div>
-      </div>
 
-      {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && !isAuthenticated && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-border shadow-lg py-4 px-fluid-md flex flex-col gap-4 z-50">
-          <div className="flex flex-col gap-4">
-            <button onClick={() => handleNavClick('services')} className="text-left text-lg font-bold text-gray-800 hover:text-deep-moss py-2">Services</button>
-            <button className="text-left text-lg font-bold text-gray-800 hover:text-deep-moss py-2">How It Works</button>
-            <button onClick={() => handleNavClick('signup')} className="text-left text-lg font-bold text-gray-800 hover:text-deep-moss py-2">Become a Provider</button>
-            <div className="h-px w-full bg-gray-100 my-2"></div>
-            <button 
+        {/* ── Mobile Dropdown ── */}
+        {mobileMenuOpen && !isAuthenticated && (
+          <div
+            className="md:hidden absolute top-full left-0 w-full bg-white border-b border-[var(--color-border)] shadow-lg py-4 px-5 flex flex-col gap-1 z-50"
+            style={{ boxShadow: 'var(--shadow-lg)' }}
+          >
+            {[
+              { label: 'Services', action: () => handleNavClick('services') },
+              { label: 'How It Works', action: () => {} },
+              { label: 'Become a Provider', action: () => handleNavClick('signup') },
+            ].map(({ label, action }) => (
+              <button
+                key={label}
+                onClick={action}
+                className="text-left px-3 py-2.5 rounded-xl text-[0.9375rem] font-semibold text-[var(--color-ink)] hover:bg-[var(--color-neutral-50)] transition-colors"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                {label}
+              </button>
+            ))}
+
+            <div className="h-px w-full my-2" style={{ background: 'var(--color-border)' }} />
+
+            <button
               onClick={() => handleNavClick('login')}
-              className="text-left text-lg font-bold text-deep-moss py-2"
+              className="text-left px-3 py-2.5 rounded-xl text-[0.9375rem] font-semibold transition-colors"
+              style={{ color: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
             >
               Log In
             </button>
-            <button 
+            <button
               onClick={() => handleNavClick('signup')}
-              className="w-full rounded-xl bg-deep-moss px-6 py-3 text-lg font-bold text-white text-center transition-all hover:bg-deep-moss-dark"
+              className="w-full py-3 rounded-xl text-[0.9375rem] font-semibold text-white text-center transition-all hover:opacity-90"
+              style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
             >
-              Sign Up
+              Get Started Free
             </button>
-            <button 
+            <button
               onClick={() => handleNavClick('signup')}
-              className="w-full rounded-xl border-2 border-deep-moss px-6 py-3 text-lg font-bold text-deep-moss text-center transition-all hover:bg-deep-moss hover:text-white"
+              className="w-full py-3 rounded-xl text-[0.9375rem] font-semibold text-center transition-all"
+              style={{
+                border: '1.5px solid var(--color-primary)',
+                color: 'var(--color-primary)',
+                fontFamily: 'var(--font-display)',
+              }}
             >
               Post a Job
             </button>
           </div>
-        </div>
-      )}
-    </nav>
+        )}
+      </nav>
+    </>
   );
 };

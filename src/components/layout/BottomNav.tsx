@@ -13,36 +13,61 @@ export const BottomNav = ({ active, onChange, userType, isAuthenticated }: Botto
   if (!isAuthenticated) return null;
 
   const customerTabs = [
-    { id: 'home', label: 'HOME', icon: HomeIcon },
-    { id: 'services', label: 'SERVICES', icon: Search },
-    { id: 'bookings', label: 'BOOKINGS', icon: Calendar },
-    { id: 'profile', label: 'PROFILE', icon: User },
+    { id: 'home',     label: 'Home',     icon: HomeIcon },
+    { id: 'services', label: 'Services', icon: Search },
+    { id: 'bookings', label: 'Bookings', icon: Calendar },
+    { id: 'profile',  label: 'Profile',  icon: User },
   ];
 
   const providerTabs = [
-    { id: 'provider-dashboard', label: 'DASHBOARD', icon: BarChart3 },
-    { id: 'provider-bookings', label: 'BOOKINGS', icon: Calendar },
-    { id: 'provider-services', label: 'SERVICES', icon: Package },
-    { id: 'provider-profile', label: 'PROFILE', icon: User },
+    { id: 'provider-dashboard', label: 'Dashboard', icon: BarChart3 },
+    { id: 'provider-bookings',  label: 'Bookings',  icon: Calendar },
+    { id: 'provider-services',  label: 'Services',  icon: Package },
+    { id: 'provider-profile',   label: 'Profile',   icon: User },
   ];
 
   const tabs = userType === 'customer' ? customerTabs : providerTabs;
 
   return (
-    <div className="z-50 flex items-center justify-between border-t border-border bg-white/80 px-fluid-md py-fluid-sm backdrop-blur-xl md:hidden shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.1)]">
+    <div
+      className="md:hidden flex items-center justify-around px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+      style={{
+        background: 'rgba(255,255,255,0.9)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        borderTop: '1px solid var(--color-border)',
+        boxShadow: '0 -8px 24px -8px rgba(0,0,0,0.07)',
+      }}
+    >
       {tabs.map((tab) => {
         const Icon = tab.icon;
-        const isActive = active === tab.id || (tab.id === 'profile' && active === 'settings') || (tab.id === 'provider-profile' && active === 'settings');
+        const isActive =
+          active === tab.id ||
+          (tab.id === 'profile' && active === 'settings') ||
+          (tab.id === 'provider-profile' && active === 'settings');
+
         return (
           <button
             key={tab.id}
             onClick={() => onChange(tab.id as Screen)}
-            className={`flex flex-col items-center gap-1 transition-colors ${isActive ? 'text-ink' : 'text-ink-muted'}`}
+            className="flex flex-col items-center gap-1 py-2 px-4 rounded-2xl transition-all"
+            style={{
+              color: isActive ? 'var(--color-deep)' : 'var(--color-neutral-400)',
+              background: isActive ? 'var(--color-primary-light)' : 'transparent',
+              minWidth: '60px',
+            }}
           >
-            <div className={`p-1 transition-all ${isActive ? 'scale-110' : ''}`}>
-              <Icon size={20} strokeWidth={isActive ? 3 : 2} />
-            </div>
-            <span className="text-[9px] font-black uppercase tracking-widest">{tab.label}</span>
+            <Icon
+              size={21}
+              strokeWidth={isActive ? 2.5 : 1.8}
+              style={{ color: isActive ? 'var(--color-deep)' : 'var(--color-neutral-400)' }}
+            />
+            <span
+              className="text-[10px] font-semibold leading-none"
+              style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.01em' }}
+            >
+              {tab.label}
+            </span>
           </button>
         );
       })}
