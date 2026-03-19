@@ -1,7 +1,9 @@
 import React from 'react';
-import { TrendingUp, Users, Calendar, DollarSign, Clock, Star, CheckCircle2, ArrowUpRight, MoreHorizontal } from 'lucide-react';
+import { TrendingUp, Users, Calendar, DollarSign, Clock, Star, ArrowUpRight, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Screen } from '../../types';
+import { ProfileCompletionWidget } from './ProfileCompletionWidget';
+import { useProvider } from '../../context/ProviderContext';
 
 interface ProviderDashboardProps {
   onNavigate: (s: Screen) => void;
@@ -25,6 +27,8 @@ const statusStyle = {
 };
 
 export const ProviderDashboard = ({ onNavigate }: ProviderDashboardProps) => {
+  const { canPostService, completionPct } = useProvider();
+
   return (
     <div className="pb-28 pt-2" style={{ minHeight: '80vh' }}>
 
@@ -52,12 +56,21 @@ export const ProviderDashboard = ({ onNavigate }: ProviderDashboardProps) => {
           >
             Download Report
           </button>
-          <button
-            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-            style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => onNavigate('provider-post-service')}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+            style={{
+              background: canPostService
+                ? 'linear-gradient(135deg, var(--color-deep) 0%, var(--color-primary) 100%)'
+                : 'var(--color-neutral-400)',
+              fontFamily: 'var(--font-display)',
+            }}
+            title={!canPostService ? `Complete profile (${completionPct}%) to post services` : 'Post a new service'}
           >
-            + Add Service
-          </button>
+            <Plus size={15} strokeWidth={2.5} />
+            {canPostService ? 'Post Service' : `${completionPct}% Complete`}
+          </motion.button>
         </div>
       </header>
 
@@ -107,92 +120,88 @@ export const ProviderDashboard = ({ onNavigate }: ProviderDashboardProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Recent Bookings */}
-        <div className="lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-              Recent Bookings
-            </h2>
-            <button
-              className="flex items-center gap-1.5 text-sm font-semibold transition-colors"
-              style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}
+        <div className="lg:col-span-2 flex flex-col gap-6">
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+                Recent Bookings
+              </h2>
+              <button
+                className="flex items-center gap-1.5 text-sm font-semibold transition-colors"
+                style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}
+                onClick={() => onNavigate('provider-bookings')}
+              >
+                View All <ArrowUpRight size={15} />
+              </button>
+            </div>
+
+            <div
+              className="rounded-2xl overflow-hidden"
+              style={{
+                background: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                boxShadow: 'var(--shadow-xs)',
+              }}
             >
-              View All <ArrowUpRight size={15} />
-            </button>
-          </div>
-
-          <div
-            className="rounded-2xl overflow-hidden"
-            style={{
-              background: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              boxShadow: 'var(--shadow-xs)',
-            }}
-          >
-            {RECENT_BOOKINGS.map((booking, idx) => {
-              const ss = statusStyle[booking.status as keyof typeof statusStyle];
-              return (
-                <div
-                  key={booking.id}
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 transition-colors hover:bg-[var(--color-neutral-50)]"
-                  style={{
-                    borderBottom: idx < RECENT_BOOKINGS.length - 1 ? '1px solid var(--color-border)' : 'none',
-                  }}
-                >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div
-                      className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ background: 'var(--color-primary-light)' }}
-                    >
-                      <Calendar size={19} style={{ color: 'var(--color-primary-hover)' }} strokeWidth={2} />
+              {RECENT_BOOKINGS.map((booking, idx) => {
+                const ss = statusStyle[booking.status as keyof typeof statusStyle];
+                return (
+                  <div
+                    key={booking.id}
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 transition-colors hover:bg-[var(--color-neutral-50)]"
+                    style={{
+                      borderBottom: idx < RECENT_BOOKINGS.length - 1 ? '1px solid var(--color-border)' : 'none',
+                    }}
+                  >
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div
+                        className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: 'var(--color-primary-light)' }}
+                      >
+                        <Calendar size={19} style={{ color: 'var(--color-primary-hover)' }} strokeWidth={2} />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-semibold truncate" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+                          {booking.service}
+                        </h4>
+                        <p className="text-xs mt-0.5" style={{ color: 'var(--color-ink-muted)' }}>
+                          {booking.customer}
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <h4 className="text-sm font-semibold truncate" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-                        {booking.service}
-                      </h4>
-                      <p className="text-xs mt-0.5" style={{ color: 'var(--color-ink-muted)' }}>
-                        {booking.customer}
-                      </p>
+
+                    <div className="flex items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+                      <div className="flex items-center gap-1.5" style={{ color: 'var(--color-ink-muted)' }}>
+                        <Clock size={13} strokeWidth={2} />
+                        <span className="text-xs font-medium" style={{ fontFamily: 'var(--font-display)' }}>{booking.time}</span>
+                      </div>
+                      <div
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold"
+                        style={{ background: ss.bg, color: ss.color, fontFamily: 'var(--font-display)' }}
+                      >
+                        {booking.status}
+                      </div>
+                      <span className="text-base font-extrabold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+                        ${booking.price}
+                      </span>
+                      <button
+                        className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all hover:bg-[var(--color-neutral-50)]"
+                        style={{
+                          border: '1.5px solid var(--color-border)',
+                          color: 'var(--color-ink)',
+                          fontFamily: 'var(--font-display)',
+                        }}
+                      >
+                        Manage
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
-                    <div className="flex items-center gap-1.5" style={{ color: 'var(--color-ink-muted)' }}>
-                      <Clock size={13} strokeWidth={2} />
-                      <span className="text-xs font-medium" style={{ fontFamily: 'var(--font-display)' }}>{booking.time}</span>
-                    </div>
-                    <div
-                      className="px-3 py-1.5 rounded-lg text-xs font-semibold"
-                      style={{ background: ss.bg, color: ss.color, fontFamily: 'var(--font-display)' }}
-                    >
-                      {booking.status}
-                    </div>
-                    <span className="text-base font-extrabold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-                      ${booking.price}
-                    </span>
-                    <button
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all"
-                      style={{
-                        border: '1.5px solid var(--color-border)',
-                        color: 'var(--color-ink)',
-                        fontFamily: 'var(--font-display)',
-                      }}
-                    >
-                      Manage
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* Quick Actions */}
-        <div className="flex flex-col gap-4">
-          <h2 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-            Quick Actions
-          </h2>
-
-          {/* Boost card */}
+          {/* ── Boost card ── */}
           <div
             className="rounded-2xl p-6 relative overflow-hidden cursor-pointer group transition-all hover:-translate-y-0.5"
             style={{
@@ -202,50 +211,35 @@ export const ProviderDashboard = ({ onNavigate }: ProviderDashboardProps) => {
           >
             <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full pointer-events-none"
               style={{ background: 'rgba(132,183,1,0.12)', filter: 'blur(20px)' }} />
-            <div className="relative z-10">
-              <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-4"
-                style={{ background: 'rgba(132,183,1,0.2)' }}>
-                <TrendingUp size={20} style={{ color: 'var(--color-primary)' }} strokeWidth={2} />
+            <div className="relative z-10 flex items-center justify-between gap-4">
+              <div>
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-3"
+                  style={{ background: 'rgba(132,183,1,0.2)' }}>
+                  <TrendingUp size={20} style={{ color: 'var(--color-primary)' }} strokeWidth={2} />
+                </div>
+                <h4 className="text-base font-bold text-white mb-1.5" style={{ fontFamily: 'var(--font-display)' }}>
+                  Boost Visibility
+                </h4>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  Promote your services to reach more customers.
+                </p>
               </div>
-              <h4 className="text-base font-bold text-white mb-1.5" style={{ fontFamily: 'var(--font-display)' }}>
-                Boost Visibility
-              </h4>
-              <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                Promote your services to reach more customers.
-              </p>
               <button
-                className="mt-4 flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                className="shrink-0 flex items-center gap-1.5 text-xs font-semibold transition-colors"
                 style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}
               >
                 Learn more <ArrowUpRight size={13} />
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Complete card */}
-          <div
-            className="rounded-2xl p-6"
-            style={{
-              background: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              boxShadow: 'var(--shadow-xs)',
-            }}
-          >
-            <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-4"
-              style={{ background: '#EEFAEF' }}>
-              <CheckCircle2 size={20} style={{ color: '#16A34A' }} strokeWidth={2} />
-            </div>
-            <h4 className="text-base font-bold mb-1.5" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-              Profile Complete
-            </h4>
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-ink-muted)' }}>
-              Your business profile is 100% complete. You're ready to grow!
-            </p>
-            {/* Progress bar */}
-            <div className="mt-4 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--color-neutral-100)' }}>
-              <div className="h-full rounded-full w-full" style={{ background: '#16A34A' }} />
-            </div>
-          </div>
+        {/* ── Profile Completion Widget ── */}
+        <div>
+          <h2 className="text-lg font-bold mb-4" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+            Profile Status
+          </h2>
+          <ProfileCompletionWidget onNavigate={onNavigate} />
         </div>
       </div>
     </div>

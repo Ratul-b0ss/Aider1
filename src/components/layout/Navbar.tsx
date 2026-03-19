@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home as HomeIcon, LayoutGrid, Calendar, User, BarChart3, Package, Bell, Menu, X, ChevronDown } from 'lucide-react';
+import { Home as HomeIcon, LayoutGrid, Calendar, User, BarChart3, Package, Bell, Menu, X, Search, HelpCircle, ShieldCheck } from 'lucide-react';
 import { Screen, UserType } from '../../types';
 
 interface NavbarProps {
@@ -22,15 +22,17 @@ export const Navbar = ({ active, onChange, userType, isAuthenticated }: NavbarPr
   const customerTabs = [
     { id: 'home',     label: 'Home',     icon: HomeIcon },
     { id: 'services', label: 'Services', icon: LayoutGrid },
+    { id: 'search',   label: 'Search',   icon: Search },
     { id: 'bookings', label: 'Bookings', icon: Calendar },
     { id: 'profile',  label: 'Profile',  icon: User },
   ];
 
   const providerTabs = [
-    { id: 'provider-dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'provider-bookings',  label: 'Bookings',  icon: Calendar },
-    { id: 'provider-services',  label: 'Services',  icon: Package },
-    { id: 'provider-profile',   label: 'Profile',   icon: User },
+    { id: 'provider-dashboard',     label: 'Dashboard',     icon: BarChart3 },
+    { id: 'provider-bookings',      label: 'Bookings',      icon: Calendar },
+    { id: 'provider-services',      label: 'Services',      icon: Package },
+    { id: 'provider-verification',  label: 'Verify',        icon: ShieldCheck },
+    { id: 'provider-profile',       label: 'Profile',       icon: User },
   ];
 
   const tabs = userType === 'customer' ? customerTabs : providerTabs;
@@ -113,10 +115,18 @@ export const Navbar = ({ active, onChange, userType, isAuthenticated }: NavbarPr
                     Services
                   </button>
                   <button
+                    onClick={() => handleNavClick('search')}
                     className="px-4 py-2 rounded-xl text-[0.875rem] font-semibold text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    How It Works
+                    Find Pros
+                  </button>
+                  <button
+                    onClick={() => handleNavClick('support')}
+                    className="px-4 py-2 rounded-xl text-[0.875rem] font-semibold text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    Support
                   </button>
                   <button
                     onClick={() => handleNavClick('signup')}
@@ -134,6 +144,24 @@ export const Navbar = ({ active, onChange, userType, isAuthenticated }: NavbarPr
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
               <>
+                {/* Search shortcut */}
+                <button
+                  onClick={() => handleNavClick('search')}
+                  className="relative h-9 w-9 flex items-center justify-center rounded-xl text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
+                  aria-label="Search"
+                >
+                  <Search size={17} strokeWidth={2} />
+                </button>
+
+                {/* Support */}
+                <button
+                  onClick={() => handleNavClick('support')}
+                  className="relative h-9 w-9 flex items-center justify-center rounded-xl text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
+                  aria-label="Support"
+                >
+                  <HelpCircle size={17} strokeWidth={2} />
+                </button>
+
                 {/* Notification Bell */}
                 <button
                   className="relative h-9 w-9 flex items-center justify-center rounded-xl text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
@@ -202,7 +230,7 @@ export const Navbar = ({ active, onChange, userType, isAuthenticated }: NavbarPr
           )}
         </div>
 
-        {/* ── Mobile Dropdown ── */}
+        {/* ── Mobile Dropdown (unauthenticated) ── */}
         {mobileMenuOpen && !isAuthenticated && (
           <div
             className="md:hidden absolute top-full left-0 w-full bg-white border-b border-[var(--color-border)] shadow-lg py-4 px-5 flex flex-col gap-1 z-50"
@@ -210,7 +238,8 @@ export const Navbar = ({ active, onChange, userType, isAuthenticated }: NavbarPr
           >
             {[
               { label: 'Services', action: () => handleNavClick('services') },
-              { label: 'How It Works', action: () => {} },
+              { label: 'Find Pros', action: () => handleNavClick('search') },
+              { label: 'Support', action: () => handleNavClick('support') },
               { label: 'Become a Provider', action: () => handleNavClick('signup') },
             ].map(({ label, action }) => (
               <button

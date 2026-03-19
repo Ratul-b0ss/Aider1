@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home as HomeIcon, Search, Calendar, User, BarChart3, Package } from 'lucide-react';
+import { Home as HomeIcon, Search, Calendar, User, BarChart3, Package, ShieldCheck, HelpCircle } from 'lucide-react';
 import { Screen, UserType } from '../../types';
 
 interface BottomNavProps {
@@ -14,16 +14,18 @@ export const BottomNav = ({ active, onChange, userType, isAuthenticated }: Botto
 
   const customerTabs = [
     { id: 'home',     label: 'Home',     icon: HomeIcon },
-    { id: 'services', label: 'Services', icon: Search },
+    { id: 'search',   label: 'Search',   icon: Search },
     { id: 'bookings', label: 'Bookings', icon: Calendar },
+    { id: 'support',  label: 'Support',  icon: HelpCircle },
     { id: 'profile',  label: 'Profile',  icon: User },
   ];
 
   const providerTabs = [
-    { id: 'provider-dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'provider-bookings',  label: 'Bookings',  icon: Calendar },
-    { id: 'provider-services',  label: 'Services',  icon: Package },
-    { id: 'provider-profile',   label: 'Profile',   icon: User },
+    { id: 'provider-dashboard',    label: 'Home',    icon: BarChart3 },
+    { id: 'provider-bookings',     label: 'Bookings', icon: Calendar },
+    { id: 'provider-services',     label: 'Services', icon: Package },
+    { id: 'provider-verification', label: 'Verify',   icon: ShieldCheck },
+    { id: 'provider-profile',      label: 'Profile',  icon: User },
   ];
 
   const tabs = userType === 'customer' ? customerTabs : providerTabs;
@@ -50,20 +52,20 @@ export const BottomNav = ({ active, onChange, userType, isAuthenticated }: Botto
           <button
             key={tab.id}
             onClick={() => onChange(tab.id as Screen)}
-            className="flex flex-col items-center gap-1 py-2 px-4 rounded-2xl transition-all"
+            className="flex flex-col items-center gap-1 py-2 px-3 rounded-2xl transition-all"
             style={{
               color: isActive ? 'var(--color-deep)' : 'var(--color-neutral-400)',
               background: isActive ? 'var(--color-primary-light)' : 'transparent',
-              minWidth: '60px',
+              minWidth: '52px',
             }}
           >
             <Icon
-              size={21}
+              size={20}
               strokeWidth={isActive ? 2.5 : 1.8}
               style={{ color: isActive ? 'var(--color-deep)' : 'var(--color-neutral-400)' }}
             />
             <span
-              className="text-[10px] font-semibold leading-none"
+              className="text-[9px] font-semibold leading-none"
               style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.01em' }}
             >
               {tab.label}
