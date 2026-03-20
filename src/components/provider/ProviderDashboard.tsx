@@ -1,52 +1,60 @@
 import React from 'react';
-import { TrendingUp, Users, Calendar, DollarSign, Clock, Star, ArrowUpRight, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Screen } from '../../types';
-import { ProfileCompletionWidget } from './ProfileCompletionWidget';
+import {
+  TrendingUp, Users, Calendar, DollarSign, Clock, Star,
+  ArrowUpRight, Plus, Shield, AlertCircle, ChevronRight,
+  CheckCircle, Zap, Lock,
+} from 'lucide-react';
+import { Screen, AuthUser } from '../../types';
 import { useProvider } from '../../context/ProviderContext';
 
 interface ProviderDashboardProps {
   onNavigate: (s: Screen) => void;
+  user: AuthUser;
 }
 
 const STATS = [
-  { label: 'Revenue',   value: '$2,450', icon: DollarSign, bg: '#EEFAEF', color: '#16A34A', trend: '+12.5%', up: true },
+  { label: 'Earnings',  value: '$2,450', icon: DollarSign, bg: '#EEFAEF', color: '#16A34A', trend: '+12.5%', up: true },
   { label: 'Bookings',  value: '48',     icon: Calendar,   bg: '#EEF6FF', color: '#2563EB', trend: '+8.2%',  up: true },
-  { label: 'Rating',    value: '4.9',    icon: Star,       bg: '#FFF4EC', color: '#EA580C', trend: '0.0%',   up: null },
+  { label: 'Rating',    value: '4.9',    icon: Star,       bg: 'var(--color-primary-light)', color: 'var(--color-deep)', trend: '0.0%', up: null },
   { label: 'Customers', value: '124',    icon: Users,      bg: '#F3EFFF', color: '#7C3AED', trend: '+15.3%', up: true },
 ];
 
 const RECENT_BOOKINGS = [
-  { id: '1', customer: 'Alex Johnson', service: 'Deep Cleaning',  time: 'Today, 2:00 PM',    status: 'Pending',   price: 45 },
-  { id: '2', customer: 'Sarah Miller', service: 'AC Repair',      time: 'Tomorrow, 10:00 AM', status: 'Confirmed', price: 60 },
+  { id: '1', customer: 'Alex Johnson', service: 'Deep Cleaning',  time: 'Today, 2:00 PM',    status: 'Pending',   price: 45, avatar: 'AJ' },
+  { id: '2', customer: 'Sarah Miller', service: 'AC Repair',      time: 'Tomorrow, 10:00 AM', status: 'Confirmed', price: 60, avatar: 'SM' },
+  { id: '3', customer: 'Tom Wilson',   service: 'Plumbing Fix',   time: 'Mar 22, 3:00 PM',   status: 'Confirmed', price: 80, avatar: 'TW' },
 ];
 
-const statusStyle = {
+const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
   Confirmed: { bg: '#EEFAEF', color: '#16A34A' },
-  Pending:   { bg: 'color-mix(in srgb, var(--color-primary) 12%, transparent)', color: 'var(--color-primary-hover)' },
+  Pending:   { bg: 'var(--color-primary-light)', color: 'var(--color-deep)' },
+  Cancelled: { bg: '#FEF2F2', color: '#EF4444' },
 };
 
-export const ProviderDashboard = ({ onNavigate }: ProviderDashboardProps) => {
-  const { canPostService, completionPct } = useProvider();
+export const ProviderDashboard = ({ onNavigate, user }: ProviderDashboardProps) => {
+  const { canPostService, completionPct, requirements } = useProvider();
+  const firstName = user.name.split(' ')[0];
+  const initials  = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div className="pb-28 pt-2" style={{ minHeight: '80vh' }}>
+    <div className="space-y-6">
 
       {/* ── Header ── */}
-      <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest mb-1.5"
+          <p className="text-xs font-semibold uppercase tracking-widest mb-1"
             style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}>
             Business Overview
           </p>
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight"
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight"
             style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-            Dashboard
+            Welcome back, {firstName} 👋
           </h1>
         </div>
         <div className="flex gap-3">
           <button
-            className="px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
             style={{
               border: '1.5px solid var(--color-border)',
               color: 'var(--color-ink)',
@@ -54,193 +62,245 @@ export const ProviderDashboard = ({ onNavigate }: ProviderDashboardProps) => {
               background: 'var(--color-surface)',
             }}
           >
-            Download Report
+            <TrendingUp size={14} />
+            Analytics
           </button>
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={() => onNavigate('provider-post-service')}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+          <button
+            onClick={() => canPostService ? onNavigate('provider-gig-create') : onNavigate('provider-verification-wizard')}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
             style={{
               background: canPostService
-                ? 'linear-gradient(135deg, var(--color-deep) 0%, var(--color-primary) 100%)'
-                : 'var(--color-neutral-400)',
+                ? 'linear-gradient(135deg, var(--color-primary) 0%, #a3d900 100%)'
+                : 'var(--color-neutral-300)',
               fontFamily: 'var(--font-display)',
+              boxShadow: canPostService ? '0 4px 14px rgba(132,183,1,0.35)' : 'none',
             }}
-            title={!canPostService ? `Complete profile (${completionPct}%) to post services` : 'Post a new service'}
           >
-            <Plus size={15} strokeWidth={2.5} />
-            {canPostService ? 'Post Service' : `${completionPct}% Complete`}
-          </motion.button>
+            {canPostService ? <Plus size={14} /> : <Lock size={14} />}
+            Post Service
+          </button>
         </div>
-      </header>
+      </div>
 
-      {/* ── Stats Grid ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {STATS.map((stat, idx) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: idx * 0.07, ease: [0.16, 1, 0.3, 1] }}
-            className="p-5 rounded-2xl"
-            style={{
-              background: stat.bg,
-              border: `1px solid ${stat.color}20`,
-            }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div
-                className="h-9 w-9 rounded-xl flex items-center justify-center"
-                style={{ background: stat.color + '18' }}
-              >
-                <stat.icon size={18} style={{ color: stat.color }} strokeWidth={1.8} />
+      {/* ════════════════════════════════════
+          ONBOARDING GATE (Fiverr-style)
+          Shows until 100% completion
+      ════════════════════════════════════ */}
+      {completionPct < 100 && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-2xl"
+          style={{
+            background: 'linear-gradient(135deg, var(--color-deep) 0%, #005840 100%)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: 'var(--shadow-lg)',
+          }}
+        >
+          {/* BG Decoration */}
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full opacity-10"
+            style={{ background: 'var(--color-primary)', filter: 'blur(40px)' }} />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+
+          <div className="relative p-6">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-5">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <AlertCircle size={15} style={{ color: 'var(--color-primary)' }} />
+                  <span className="text-xs font-semibold" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}>
+                    Profile Setup Required
+                  </span>
+                </div>
+                <h3 className="text-lg font-extrabold text-white mb-1" style={{ fontFamily: 'var(--font-display)' }}>
+                  Complete your profile to start earning
+                </h3>
+                <p className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  {canPostService
+                    ? 'Your profile is complete! You can now post services.'
+                    : `${100 - completionPct}% more to unlock all platform features.`}
+                </p>
+
+                {/* Progress Bar */}
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-semibold text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                      Profile Completion
+                    </span>
+                    <span className="text-xs font-bold" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}>
+                      {completionPct}%
+                    </span>
+                  </div>
+                  <div className="h-2.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                    <motion.div
+                      className="h-full rounded-full"
+                      style={{
+                        background: 'linear-gradient(90deg, var(--color-primary) 0%, #a3d900 100%)',
+                        boxShadow: '0 0 10px rgba(132,183,1,0.5)',
+                      }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${completionPct}%` }}
+                      transition={{ duration: 1.2, ease: 'easeOut' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Requirement Chips */}
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {requirements.map(req => (
+                    <div
+                      key={req.id}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold"
+                      style={{
+                        background: req.isComplete ? 'rgba(132,183,1,0.2)' : 'rgba(255,255,255,0.08)',
+                        color: req.isComplete ? 'var(--color-primary)' : 'rgba(255,255,255,0.5)',
+                        border: `1px solid ${req.isComplete ? 'rgba(132,183,1,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                        fontFamily: 'var(--font-display)',
+                      }}
+                    >
+                      {req.isComplete ? <CheckCircle size={10} /> : <Clock size={10} />}
+                      {req.label}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <span
-                className="text-[11px] font-semibold px-2 py-1 rounded-lg"
+
+              <button
+                onClick={() => onNavigate('provider-verification-wizard')}
+                className="shrink-0 flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
                 style={{
-                  background: stat.up === true ? '#EEFAEF' : stat.up === false ? '#FEF2F2' : 'rgba(0,0,0,0.06)',
-                  color: stat.up === true ? '#16A34A' : stat.up === false ? '#DC2626' : 'var(--color-ink-muted)',
+                  background: 'var(--color-primary)',
                   fontFamily: 'var(--font-display)',
+                  boxShadow: '0 4px 14px rgba(132,183,1,0.35)',
                 }}
               >
-                {stat.up === true && '↑ '}{stat.trend}
-              </span>
+                Continue Setup
+                <ChevronRight size={15} />
+              </button>
             </div>
-            <p className="text-2xl font-extrabold" style={{ color: stat.color, fontFamily: 'var(--font-display)' }}>
-              {stat.value}
+          </div>
+        </motion.div>
+      )}
+
+      {/* ── Stats Grid ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {STATS.map(({ label, value, icon: Icon, bg, color, trend, up }, idx) => (
+          <motion.div
+            key={label}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: idx * 0.08 }}
+            className="rounded-2xl p-4"
+            style={{ background: bg, border: `1px solid ${color}20` }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="h-9 w-9 rounded-xl flex items-center justify-center" style={{ background: `${color}18` }}>
+                <Icon size={16} style={{ color }} strokeWidth={2} />
+              </div>
+              {up !== null && (
+                <span
+                  className="flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                  style={{
+                    background: up ? '#EEFAEF' : '#FEF2F2',
+                    color: up ? '#16A34A' : '#EF4444',
+                    fontFamily: 'var(--font-display)',
+                  }}
+                >
+                  <ArrowUpRight size={9} style={{ transform: up ? 'none' : 'scaleY(-1)' }} />
+                  {trend}
+                </span>
+              )}
+            </div>
+            <p className="text-2xl font-extrabold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+              {value}
             </p>
-            <p className="text-xs font-medium mt-1" style={{ color: stat.color, fontFamily: 'var(--font-display)', opacity: 0.7 }}>
-              {stat.label}
-            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-ink-muted)' }}>{label}</p>
           </motion.div>
         ))}
       </div>
 
-      {/* ── Main Content ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {/* Recent Bookings */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-                Recent Bookings
-              </h2>
-              <button
-                className="flex items-center gap-1.5 text-sm font-semibold transition-colors"
-                style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}
-                onClick={() => onNavigate('provider-bookings')}
-              >
-                View All <ArrowUpRight size={15} />
-              </button>
-            </div>
-
-            <div
-              className="rounded-2xl overflow-hidden"
-              style={{
-                background: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                boxShadow: 'var(--shadow-xs)',
-              }}
-            >
-              {RECENT_BOOKINGS.map((booking, idx) => {
-                const ss = statusStyle[booking.status as keyof typeof statusStyle];
-                return (
-                  <div
-                    key={booking.id}
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 transition-colors hover:bg-[var(--color-neutral-50)]"
-                    style={{
-                      borderBottom: idx < RECENT_BOOKINGS.length - 1 ? '1px solid var(--color-border)' : 'none',
-                    }}
-                  >
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div
-                        className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0"
-                        style={{ background: 'var(--color-primary-light)' }}
-                      >
-                        <Calendar size={19} style={{ color: 'var(--color-primary-hover)' }} strokeWidth={2} />
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-sm font-semibold truncate" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-                          {booking.service}
-                        </h4>
-                        <p className="text-xs mt-0.5" style={{ color: 'var(--color-ink-muted)' }}>
-                          {booking.customer}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
-                      <div className="flex items-center gap-1.5" style={{ color: 'var(--color-ink-muted)' }}>
-                        <Clock size={13} strokeWidth={2} />
-                        <span className="text-xs font-medium" style={{ fontFamily: 'var(--font-display)' }}>{booking.time}</span>
-                      </div>
-                      <div
-                        className="px-3 py-1.5 rounded-lg text-xs font-semibold"
-                        style={{ background: ss.bg, color: ss.color, fontFamily: 'var(--font-display)' }}
-                      >
-                        {booking.status}
-                      </div>
-                      <span className="text-base font-extrabold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-                        ${booking.price}
-                      </span>
-                      <button
-                        className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all hover:bg-[var(--color-neutral-50)]"
-                        style={{
-                          border: '1.5px solid var(--color-border)',
-                          color: 'var(--color-ink)',
-                          fontFamily: 'var(--font-display)',
-                        }}
-                      >
-                        Manage
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ── Boost card ── */}
-          <div
-            className="rounded-2xl p-6 relative overflow-hidden cursor-pointer group transition-all hover:-translate-y-0.5"
-            style={{
-              background: 'linear-gradient(140deg, var(--color-deep) 0%, #005840 100%)',
-              boxShadow: 'var(--shadow-lg)',
-            }}
-          >
-            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full pointer-events-none"
-              style={{ background: 'rgba(132,183,1,0.12)', filter: 'blur(20px)' }} />
-            <div className="relative z-10 flex items-center justify-between gap-4">
-              <div>
-                <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-3"
-                  style={{ background: 'rgba(132,183,1,0.2)' }}>
-                  <TrendingUp size={20} style={{ color: 'var(--color-primary)' }} strokeWidth={2} />
-                </div>
-                <h4 className="text-base font-bold text-white mb-1.5" style={{ fontFamily: 'var(--font-display)' }}>
-                  Boost Visibility
-                </h4>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                  Promote your services to reach more customers.
-                </p>
-              </div>
-              <button
-                className="shrink-0 flex items-center gap-1.5 text-xs font-semibold transition-colors"
-                style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}
-              >
-                Learn more <ArrowUpRight size={13} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Profile Completion Widget ── */}
-        <div>
-          <h2 className="text-lg font-bold mb-4" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-            Profile Status
+      {/* ── Recent Bookings ── */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)' }}
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+          <h2 className="text-base font-extrabold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+            Recent Bookings
           </h2>
-          <ProfileCompletionWidget onNavigate={onNavigate} />
+          <button
+            onClick={() => onNavigate('provider-bookings')}
+            className="flex items-center gap-1 text-xs font-semibold"
+            style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}
+          >
+            View All <ChevronRight size={12} />
+          </button>
         </div>
+        <div className="divide-y" style={{ '--tw-divide-opacity': 1 } as React.CSSProperties}>
+          {RECENT_BOOKINGS.map((b, idx) => {
+            const ss = STATUS_STYLE[b.status] ?? STATUS_STYLE.Pending;
+            return (
+              <motion.div
+                key={b.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: idx * 0.07 }}
+                className="flex items-center gap-4 px-5 py-4"
+                style={{ borderColor: 'var(--color-border)' }}
+              >
+                <div
+                  className="h-9 w-9 rounded-xl flex items-center justify-center text-xs font-bold text-white shrink-0"
+                  style={{ background: 'linear-gradient(135deg, var(--color-deep) 0%, var(--color-primary) 100%)' }}
+                >
+                  {b.avatar}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+                    {b.customer}
+                  </p>
+                  <p className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>
+                    {b.service} · {b.time}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span
+                    className="text-[10px] font-bold px-2.5 py-1 rounded-full"
+                    style={{ background: ss.bg, color: ss.color, fontFamily: 'var(--font-display)' }}
+                  >
+                    {b.status}
+                  </span>
+                  <span className="text-sm font-extrabold" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}>
+                    ${b.price}
+                  </span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Quick Actions ── */}
+      <div className="grid sm:grid-cols-3 gap-4">
+        {[
+          { label: 'Verify Identity',   icon: Shield,   screen: 'provider-verification-wizard' as Screen, color: '#2563EB', bg: '#EEF6FF' },
+          { label: 'Manage Wallet',     icon: DollarSign, screen: 'provider-wallet' as Screen,            color: '#16A34A', bg: '#EEFAEF' },
+          { label: 'View Full Profile', icon: Users,    screen: 'provider-profile' as Screen,             color: 'var(--color-deep)', bg: 'var(--color-primary-light)' },
+        ].map(({ label, icon: Icon, screen: s, color, bg }) => (
+          <button
+            key={label}
+            onClick={() => onNavigate(s)}
+            className="flex items-center gap-3 p-4 rounded-2xl text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
+            style={{ background: bg, border: `1px solid ${color}20` }}
+          >
+            <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${color}15` }}>
+              <Icon size={18} style={{ color }} strokeWidth={1.8} />
+            </div>
+            <span className="text-sm font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+              {label}
+            </span>
+            <ChevronRight size={15} className="ml-auto" style={{ color: 'var(--color-neutral-400)' }} />
+          </button>
+        ))}
       </div>
     </div>
   );

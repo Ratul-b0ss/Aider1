@@ -1,172 +1,113 @@
 import React from 'react';
-import { User, Settings as SettingsIcon, CreditCard, ShieldCheck, Headphones, LogOut, ChevronRight, Star, Clock, Camera } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Screen } from '../../types';
+import {
+  User, Settings, LogOut, Star, ChevronRight, MapPin,
+  Calendar, Shield, BookOpen, Heart, Bell, CreditCard,
+} from 'lucide-react';
+import { Screen, AuthUser } from '../../types';
 
 interface ProfileProps {
-  onLogout: () => void;
   onNavigate: (s: Screen) => void;
+  onLogout: () => void;
+  user: AuthUser;
 }
 
-const MENU_ITEMS = [
-  { id: 'account',       name: 'Account Details',   icon: User,         bg: '#EEF6FF', color: '#2563EB' },
-  { id: 'payments',      name: 'Payment Methods',   icon: CreditCard,   bg: '#FFF4EC', color: '#EA580C' },
-  { id: 'notifications', name: 'Notifications',     icon: Headphones,   bg: '#FEF0F9', color: '#DB2777' },
-  { id: 'security',      name: 'Security & Privacy', icon: ShieldCheck, bg: '#F3EFFF', color: '#7C3AED' },
-  { id: 'settings',      name: 'App Settings',      icon: SettingsIcon, bg: '#EEFAEF', color: '#16A34A' },
+const QUICK_ACTIONS = [
+  { icon: BookOpen,  label: 'My Bookings',  screen: 'bookings' as Screen,  color: '#2563EB', bg: '#EEF6FF' },
+  { icon: Heart,     label: 'Saved',        screen: 'services' as Screen,  color: '#DB2777', bg: '#FEF0F9' },
+  { icon: Star,      label: 'Reviews',      screen: 'bookings' as Screen,  color: '#CA8A04', bg: '#FEFCE8' },
 ];
 
-const STATS = [
-  { label: 'Bookings', value: '12', color: '#2563EB', bg: '#EEF6FF' },
-  { label: 'Reviews',  value: '8',  color: '#EA580C', bg: '#FFF4EC' },
-  { label: 'Saved',    value: '24', color: '#DB2777', bg: '#FEF0F9' },
-  { label: 'Points',   value: '450', color: '#7C3AED', bg: '#F3EFFF' },
-];
+export const Profile = ({ onNavigate, onLogout, user }: ProfileProps) => {
+  const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
-export const Profile = ({ onLogout, onNavigate }: ProfileProps) => {
   return (
-    <div className="pb-28 pt-2 max-w-3xl mx-auto">
-
-      {/* ── Header ── */}
-      <header className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1.5"
-          style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}>
-          My Account
-        </p>
-        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight"
-          style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-          Profile
-        </h1>
-      </header>
-
-      {/* ── Profile Card ── */}
-      <section
-        className="rounded-2xl p-6 md:p-8 mb-6 relative overflow-hidden"
-        style={{
-          background: 'linear-gradient(140deg, var(--color-deep) 0%, #005840 60%, #00724e 100%)',
-          boxShadow: 'var(--shadow-xl)',
-        }}
+    <div className="space-y-5">
+      {/* ── Header Card ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative rounded-2xl overflow-hidden p-6"
+        style={{ background: 'linear-gradient(135deg, var(--color-deep) 0%, #006b4e 100%)' }}
       >
-        {/* Decorative blob */}
-        <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full pointer-events-none"
-          style={{ background: 'rgba(132,183,1,0.15)', filter: 'blur(40px)' }} />
-
-        <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-5">
-          {/* Avatar */}
-          <div className="relative shrink-0">
-            <div
-              className="h-20 w-20 rounded-2xl overflow-hidden"
-              style={{ border: '2px solid rgba(255,255,255,0.2)' }}
-            >
-              <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
-                alt="Profile"
-                className="h-full w-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            <button
-              className="absolute -bottom-1.5 -right-1.5 h-7 w-7 rounded-xl flex items-center justify-center"
-              style={{ background: 'var(--color-primary)', boxShadow: 'var(--shadow-md)' }}
-              aria-label="Change avatar"
-            >
-              <Camera size={13} className="text-white" />
-            </button>
-          </div>
-
-          {/* Info */}
-          <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-xl font-extrabold text-white" style={{ fontFamily: 'var(--font-display)' }}>
-              Sariful Alam
-            </h2>
-            <p className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
-              sarifulalamratul@gmail.com
-            </p>
-
-            <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-4">
-              <div
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
-                style={{ background: 'rgba(255,255,255,0.12)' }}
-              >
-                <Star size={12} style={{ color: 'var(--color-primary)' }} className="fill-current" />
-                <span className="text-xs font-semibold text-white" style={{ fontFamily: 'var(--font-display)' }}>
-                  Premium Member
-                </span>
-              </div>
-              <div
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
-                style={{ background: 'rgba(255,255,255,0.12)' }}
-              >
-                <Clock size={12} style={{ color: 'rgba(255,255,255,0.6)' }} />
-                <span className="text-xs font-semibold text-white" style={{ fontFamily: 'var(--font-display)' }}>
-                  Joined Mar 2024
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <button
-            className="shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
-            style={{
-              border: '1.5px solid rgba(255,255,255,0.35)',
-              color: 'rgba(255,255,255,0.9)',
-              fontFamily: 'var(--font-display)',
-            }}
+        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full opacity-10"
+          style={{ background: 'var(--color-primary)', filter: 'blur(30px)' }} />
+        <div className="relative flex items-center gap-4">
+          <div
+            className="h-16 w-16 rounded-2xl flex items-center justify-center text-xl font-extrabold text-white shrink-0"
+            style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)' }}
           >
-            Edit Profile
+            {initials}
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-extrabold text-white" style={{ fontFamily: 'var(--font-display)' }}>
+              {user.name}
+            </h2>
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>{user.email}</p>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="flex items-center gap-1">
+                <Star size={12} style={{ color: 'var(--color-primary)' }} className="fill-current" />
+                <span className="text-xs font-semibold text-white">4.9</span>
+              </div>
+              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>·</span>
+              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.65)' }}>12 bookings</span>
+            </div>
+          </div>
+          <button
+            onClick={() => onNavigate('settings')}
+            className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0"
+            style={{ background: 'rgba(255,255,255,0.1)' }}
+          >
+            <Settings size={15} className="text-white" />
           </button>
         </div>
-      </section>
+      </motion.div>
 
-      {/* ── Stats ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        {STATS.map((stat, idx) => (
-          <motion.div
-            key={stat.label}
+      {/* ── Quick Actions ── */}
+      <div className="grid grid-cols-3 gap-3">
+        {QUICK_ACTIONS.map(({ icon: Icon, label, screen, color, bg }, idx) => (
+          <motion.button
+            key={label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
-            className="p-5 rounded-2xl text-center"
-            style={{ background: stat.bg, border: `1px solid ${stat.color}20` }}
+            transition={{ delay: idx * 0.08 }}
+            onClick={() => onNavigate(screen)}
+            className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-all hover:-translate-y-0.5"
+            style={{ background: bg, border: `1px solid ${color}20` }}
           >
-            <p className="text-2xl font-extrabold" style={{ color: stat.color, fontFamily: 'var(--font-display)' }}>
-              {stat.value}
-            </p>
-            <p className="text-xs font-medium mt-1" style={{ color: stat.color, fontFamily: 'var(--font-display)', opacity: 0.75 }}>
-              {stat.label}
-            </p>
-          </motion.div>
+            <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: `${color}15` }}>
+              <Icon size={18} style={{ color }} strokeWidth={1.8} />
+            </div>
+            <span className="text-[11px] font-semibold" style={{ color, fontFamily: 'var(--font-display)' }}>{label}</span>
+          </motion.button>
         ))}
       </div>
 
-      {/* ── Menu ── */}
-      <div
-        className="rounded-2xl overflow-hidden mb-6"
-        style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-xs)' }}
-      >
-        {MENU_ITEMS.map((item, idx) => (
+      {/* ── Settings List ── */}
+      <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-xs)' }}>
+        {[
+          { icon: User,       label: 'Edit Profile',         screen: 'settings' as Screen,  desc: 'Name, photo, bio' },
+          { icon: Bell,       label: 'Notifications',        screen: 'settings' as Screen,  desc: 'Push, email alerts' },
+          { icon: CreditCard, label: 'Payment Methods',      screen: 'settings' as Screen,  desc: 'Cards & billing' },
+          { icon: Shield,     label: 'Security',             screen: 'settings' as Screen,  desc: 'Password, 2FA' },
+          { icon: MapPin,     label: 'Saved Addresses',      screen: 'settings' as Screen,  desc: 'Home, work...' },
+          { icon: BookOpen,   label: 'Help Center',          screen: 'help' as Screen,       desc: 'FAQs & support' },
+        ].map(({ icon: Icon, label, screen, desc }, i) => (
           <button
-            key={item.id}
-            onClick={() => onNavigate(item.id as Screen)}
-            className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-[var(--color-neutral-50)]"
-            style={{ borderBottom: idx < MENU_ITEMS.length - 1 ? '1px solid var(--color-border)' : 'none' }}
+            key={label}
+            onClick={() => onNavigate(screen)}
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-neutral-50 border-b last:border-0"
+            style={{ borderColor: 'var(--color-border)' }}
           >
-            <div className="flex items-center gap-4">
-              <div
-                className="h-10 w-10 flex items-center justify-center rounded-xl shrink-0"
-                style={{ background: item.bg }}
-              >
-                <item.icon size={18} style={{ color: item.color }} strokeWidth={1.8} />
-              </div>
-              <span className="text-sm font-semibold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-                {item.name}
-              </span>
+            <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: 'var(--color-neutral-50)' }}>
+              <Icon size={15} style={{ color: 'var(--color-ink-muted)' }} />
             </div>
-            <ChevronRight
-              size={17}
-              className="transition-transform group-hover:translate-x-0.5"
-              style={{ color: 'var(--color-neutral-400)' }}
-            />
+            <div className="flex-1">
+              <p className="text-sm font-semibold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>{label}</p>
+              <p className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>{desc}</p>
+            </div>
+            <ChevronRight size={15} style={{ color: 'var(--color-neutral-300)' }} />
           </button>
         ))}
       </div>
@@ -174,16 +115,10 @@ export const Profile = ({ onLogout, onNavigate }: ProfileProps) => {
       {/* ── Logout ── */}
       <button
         onClick={onLogout}
-        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold transition-all hover:opacity-90"
-        style={{
-          background: '#FEF2F2',
-          color: '#DC2626',
-          border: '1px solid #FECACA',
-          fontFamily: 'var(--font-display)',
-        }}
+        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold transition-all"
+        style={{ border: '1.5px solid #FCA5A5', color: '#EF4444', background: '#FEF2F2', fontFamily: 'var(--font-display)' }}
       >
-        <LogOut size={17} strokeWidth={2} />
-        Sign Out
+        <LogOut size={15} /> Sign Out
       </button>
     </div>
   );

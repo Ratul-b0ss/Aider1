@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { UserType } from '../../types';
+import { AuthUser, Screen } from '../../types';
 import { loginSchema, signupSchema } from '../../lib/validations';
 import { z } from 'zod';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
+type UserType = 'customer' | 'provider';
+
 interface AuthProps {
   initialMode: 'login' | 'signup';
-  onAuthSuccess: (type: UserType) => void;
+  onAuthSuccess: (user: AuthUser) => void;
+  onNavigate?: (s: Screen) => void;
 }
 
-export const Auth = ({ initialMode, onAuthSuccess }: AuthProps) => {
+export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
   const [isSignUp, setIsSignUp] = useState(initialMode === 'signup');
   const [userType, setUserType] = useState<UserType>('customer');
   const [isMobile, setIsMobile] = useState(false);
@@ -54,7 +57,15 @@ export const Auth = ({ initialMode, onAuthSuccess }: AuthProps) => {
       } else {
         loginSchema.parse({ email: formData.email, password: formData.password });
       }
-      onAuthSuccess(userType);
+      const name = isSignupSubmit
+        ? (formData.fullName || 'New User')
+        : userType === 'customer' ? 'Alex Johnson' : 'Jane Provider';
+      onAuthSuccess({
+        id: Date.now().toString(),
+        name,
+        email: formData.email || 'user@servify.com',
+        role: userType,
+      });
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Record<string, string> = {};
