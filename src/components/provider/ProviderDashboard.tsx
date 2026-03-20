@@ -70,10 +70,10 @@ export const ProviderDashboard = ({ onNavigate, user }: ProviderDashboardProps) 
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
             style={{
               background: canPostService
-                ? 'linear-gradient(135deg, var(--color-primary) 0%, #a3d900 100%)'
+                ? 'linear-gradient(135deg, var(--color-primary) 0%, #D1F843 100%)'
                 : 'var(--color-neutral-300)',
               fontFamily: 'var(--font-display)',
-              boxShadow: canPostService ? '0 4px 14px rgba(132,183,1,0.35)' : 'none',
+              boxShadow: canPostService ? '0 4px 14px rgba(0,91,64,0.35)' : 'none',
             }}
           >
             {canPostService ? <Plus size={14} /> : <Lock size={14} />}
@@ -135,8 +135,8 @@ export const ProviderDashboard = ({ onNavigate, user }: ProviderDashboardProps) 
                     <motion.div
                       className="h-full rounded-full"
                       style={{
-                        background: 'linear-gradient(90deg, var(--color-primary) 0%, #a3d900 100%)',
-                        boxShadow: '0 0 10px rgba(132,183,1,0.5)',
+                                background: 'linear-gradient(90deg, #D1F843 0%, #005B40 100%)',
+                                boxShadow: '0 0 10px rgba(0,91,64,0.5)',
                       }}
                       initial={{ width: 0 }}
                       animate={{ width: `${completionPct}%` }}
@@ -152,9 +152,9 @@ export const ProviderDashboard = ({ onNavigate, user }: ProviderDashboardProps) 
                       key={req.id}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold"
                       style={{
-                        background: req.isComplete ? 'rgba(132,183,1,0.2)' : 'rgba(255,255,255,0.08)',
-                        color: req.isComplete ? 'var(--color-primary)' : 'rgba(255,255,255,0.5)',
-                        border: `1px solid ${req.isComplete ? 'rgba(132,183,1,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                        background: req.isComplete ? 'rgba(209,248,67,0.2)' : 'rgba(255,255,255,0.08)',
+                        color: req.isComplete ? '#D1F843' : 'rgba(255,255,255,0.5)',
+                        border: `1px solid ${req.isComplete ? 'rgba(209,248,67,0.3)' : 'rgba(255,255,255,0.1)'}`,
                         fontFamily: 'var(--font-display)',
                       }}
                     >
@@ -171,7 +171,7 @@ export const ProviderDashboard = ({ onNavigate, user }: ProviderDashboardProps) 
                 style={{
                   background: 'var(--color-primary)',
                   fontFamily: 'var(--font-display)',
-                  boxShadow: '0 4px 14px rgba(132,183,1,0.35)',
+                  boxShadow: '0 4px 14px rgba(0,91,64,0.35)',
                 }}
               >
                 Continue Setup

@@ -140,7 +140,7 @@ export const GigCreateForm = ({ onNavigate }: GigCreateFormProps) => {
             className="h-1.5 rounded-full flex-1 transition-all duration-500"
             style={{
               background: s <= step
-                ? 'linear-gradient(90deg, var(--color-primary) 0%, #a3d900 100%)'
+                ? 'linear-gradient(90deg, var(--color-primary) 0%, #D1F843 100%)'
                 : 'var(--color-neutral-100)',
             }}
           />
@@ -425,9 +425,9 @@ export const GigCreateForm = ({ onNavigate }: GigCreateFormProps) => {
             onClick={() => setPublished(true)}
             className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
             style={{
-              background: 'linear-gradient(135deg, var(--color-primary) 0%, #a3d900 100%)',
+              background: 'linear-gradient(135deg, var(--color-primary) 0%, #D1F843 100%)',
               fontFamily: 'var(--font-display)',
-              boxShadow: '0 4px 14px rgba(132,183,1,0.35)',
+              boxShadow: '0 4px 14px rgba(209,248,67,0.35)',
             }}
           >
             <Zap size={15} /> Publish Service

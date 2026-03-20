@@ -24,7 +24,7 @@ const CATEGORIES = [
 
 const FAQS = [
   { q: 'How do I book a service?',       a: 'Browse services, select the one you need, choose a time slot, and confirm your booking in three easy steps. Payment is held securely until the service is complete.', cat: 'bookings' },
-  { q: 'Are service providers verified?', a: 'Yes! Every provider on Servify undergoes identity verification, background checks, and must submit professional certifications before being approved.', cat: 'getting-started' },
+  { q: 'Are service providers verified?', a: 'Yes! Every provider on AiDER undergoes identity verification, background checks, and must submit professional certifications before being approved.', cat: 'getting-started' },
   { q: 'What if I\'m unhappy with a service?', a: 'We offer a 24-hour satisfaction guarantee. Contact our support team within 24 hours of service completion and we will work to make it right, including potential refunds.', cat: 'bookings' },
   { q: 'How do payouts work for providers?', a: 'Payments are released to your wallet 24 hours after service completion. You can request a payout to your bank or debit card at any time, with funds arriving in 1–3 business days.', cat: 'providers' },
   { q: 'Can I cancel a booking?',        a: 'Yes. Cancellations made 24+ hours before the scheduled service are fully refunded. Late cancellations (under 24 hours) may incur a 20% fee to compensate the provider.', cat: 'bookings' },
@@ -63,7 +63,7 @@ export const HelpCenter = ({ onNavigate }: HelpCenterProps) => {
             How can we help?
           </h1>
           <p className="text-base mb-7" style={{ color: 'rgba(255,255,255,0.65)' }}>
-            Find answers, guides, and support for all things Servify.
+            Find answers, guides, and support for all things AiDER.
           </p>
           <div
             className="flex items-center gap-3 px-4 py-3 rounded-2xl max-w-lg mx-auto"
@@ -199,9 +199,9 @@ export const HelpCenter = ({ onNavigate }: HelpCenterProps) => {
             </p>
             <div className="flex flex-wrap gap-3">
               {[
-                { icon: Mail,           label: 'Email Support',    sub: 'support@servify.com' },
+                { icon: Mail,           label: 'Email Support',    sub: 'support@aider.com' },
                 { icon: MessageCircle,  label: 'Live Chat',        sub: 'Average 2 min response' },
-                { icon: Phone,          label: 'Phone Support',    sub: '+1 (800) SERV-IFY' },
+                { icon: Phone,          label: 'Phone Support',    sub: '+1 (800) AiDER-01' },
               ].map(({ icon: Icon, label, sub }) => (
                 <button
                   key={label}

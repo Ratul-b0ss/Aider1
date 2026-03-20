@@ -91,7 +91,7 @@ export const Footer = ({ onNavigate }: FooterProps) => {
                   className="text-base font-extrabold text-white"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
-                  Servify
+                  AiDER
                 </span>
               </div>
               <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
@@ -174,7 +174,7 @@ export const Footer = ({ onNavigate }: FooterProps) => {
             style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
           >
             <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
-              © {new Date().getFullYear()} Servify. All rights reserved.
+              © {new Date().getFullYear()} AiDER. All rights reserved.
             </p>
             <div className="flex gap-4">
               {['Terms', 'Privacy', 'Cookies'].map(item => (
