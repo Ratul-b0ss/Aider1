@@ -1,135 +1,163 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GlobalErrorBoundary } from './components/ErrorBoundary';
+import { ProviderContextProvider } from './context/ProviderContext';
+
+// ── Layout ──
 import { Navbar } from './components/layout/Navbar';
+import { Footer } from './components/layout/Footer';
 import { BottomNav } from './components/layout/BottomNav';
 import { CustomerLayout } from './components/layout/CustomerLayout';
-import { ProviderLayout } from './components/layout/ProviderLayout';
+import { ProviderSidebarLayout } from './components/layout/ProviderSidebarLayout';
+
+// ── Auth ──
 import { Auth } from './components/auth/Auth';
 
-// Customer screens
-import { Home } from './components/customer/Home';
+// ── Landing (State 1: Guest) ──
+import { GuestLanding } from './components/guest/GuestLanding';
+
+// ── Customer Screens (State 2) ──
+import { CustomerDashboard } from './components/customer/CustomerDashboard';
 import { Services } from './components/customer/Services';
+import { ServiceDetail } from './components/customer/ServiceDetail';
+import { BookingCheckout } from './components/customer/BookingCheckout';
+import { OrderTracking } from './components/customer/OrderTracking';
 import { Profile } from './components/customer/Profile';
 import { Bookings } from './components/customer/Bookings';
 import { Settings } from './components/customer/Settings';
 
-// Provider screens
+// ── Provider Screens (State 3) ──
 import { ProviderDashboard } from './components/provider/ProviderDashboard';
 import { ProviderProfile } from './components/provider/ProviderProfile';
 import { ProviderVerification } from './components/provider/ProviderVerification';
 import { PostServiceGate } from './components/provider/PostServiceGate';
+import { GigCreateForm } from './components/provider/GigCreateForm';
+import { WalletPayout } from './components/provider/WalletPayout';
+import { VerificationWizard } from './components/provider/VerificationWizard';
 
-// Shared screens
+// ── Shared Screens ──
 import { SearchPage } from './components/shared/SearchPage';
 import { SupportPage } from './components/shared/SupportPage';
 
-// Context
-import { ProviderContextProvider } from './context/ProviderContext';
+// ── Public Screens ──
+import { TermsPage } from './components/public/TermsPage';
+import { PrivacyPage } from './components/public/PrivacyPage';
+import { HelpCenter } from './components/public/HelpCenter';
 
-import { Screen, UserType } from './types';
+import { Screen, AuthUser } from './types';
 
-// ── Screens that should have full-bleed (no wrapper padding) ────────────────
-const FULL_BLEED_SCREENS: Screen[] = ['home'];
+// ── Screens that use full-bleed (no padding wrapper) ─────────────────────────
+const FULL_BLEED_SCREENS: Screen[] = ['landing', 'login', 'signup'];
 
-// ── Screens where nav is shown ────────────────────────────────────────────────
-const NAV_SCREENS: Screen[] = [
-  'home', 'services', 'profile', 'settings', 'bookings', 'search', 'support',
+// ── Screens with bottom nav (mobile) ─────────────────────────────────────────
+const CUSTOMER_NAV_SCREENS: Screen[] = [
+  'home', 'services', 'service-detail', 'profile', 'settings',
+  'bookings', 'search', 'support', 'booking-checkout', 'order-tracking',
+];
+const PROVIDER_NAV_SCREENS: Screen[] = [
   'provider-dashboard', 'provider-profile', 'provider-bookings',
   'provider-services', 'provider-verification', 'provider-post-service',
+  'provider-gig-create', 'provider-wallet', 'provider-verification-wizard',
 ];
 
-// ── Auth-only screens ─────────────────────────────────────────────────────────
-const AUTH_SCREENS: Screen[] = ['login', 'signup'];
+// ── Page transition preset ────────────────────────────────────────────────────
+const pageTransition = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  exit:    { opacity: 0, y: -8 },
+  transition: { duration: 0.32, ease: [0.23, 1, 0.32, 1] as [number, number, number, number] },
+};
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>('home');
-  const [userType, setUserType] = useState<UserType>('customer');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [screen, setScreen] = useState<Screen>('landing');
+  const [user, setUser] = useState<AuthUser | null>(null);
 
-  const handleAuthSuccess = (type: UserType) => {
-    setUserType(type);
-    setIsAuthenticated(true);
-    setScreen(type === 'customer' ? 'home' : 'provider-dashboard');
+  // ── Auth Handlers ────────────────────────────────────────────────────────
+  const handleAuthSuccess = (userData: AuthUser) => {
+    setUser(userData);
+    setScreen(userData.role === 'customer' ? 'home' : 'provider-dashboard');
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    setUserType('customer');
-    setScreen('home');
+    setUser(null);
+    setScreen('landing');
   };
 
-  // ── Screen renderer ─────────────────────────────────────────────────────────
-  const renderScreen = () => {
-    switch (screen) {
-      // ── Auth ──
-      case 'login':
-      case 'signup':
-        return <Auth initialMode={screen} onAuthSuccess={handleAuthSuccess} />;
+  const navigate = (s: Screen) => setScreen(s);
 
-      // ── Shared ──
-      case 'search':
-        return <SearchPage onNavigate={setScreen} userType={userType} />;
-      case 'support':
-        return <SupportPage onNavigate={setScreen} userType={userType} />;
+  // ── LandingSwitcher: 3-State Core Controller ─────────────────────────────
+  const authStatus = !user ? 'guest' : user.role === 'customer' ? 'customer' : 'provider';
 
-      // ── Customer ──
-      case 'home':
-        return <Home onNavigate={setScreen} isAuthenticated={isAuthenticated} />;
-      case 'services':
-        return <Services onNavigate={setScreen} />;
-      case 'profile':
-        return <Profile onNavigate={setScreen} onLogout={handleLogout} />;
-      case 'bookings':
-        return <Bookings onNavigate={setScreen} />;
-      case 'settings':
-        return (
-          <Settings
-            onBack={() => setScreen(userType === 'customer' ? 'profile' : 'provider-profile')}
-            onLogout={handleLogout}
-          />
-        );
+  // ── Screen Renderer ──────────────────────────────────────────────────────
+  const renderScreen = (): React.ReactNode => {
 
-      // ── Provider ──
-      case 'provider-dashboard':
-        return <ProviderDashboard onNavigate={setScreen} />;
-      case 'provider-profile':
-        return <ProviderProfile onNavigate={setScreen} onLogout={handleLogout} />;
-      case 'provider-bookings':
-        return <Bookings onNavigate={setScreen} />;
-      case 'provider-services':
-        return <Services onNavigate={setScreen} />;
-      case 'provider-verification':
-        return <ProviderVerification onNavigate={setScreen} />;
-      case 'provider-post-service':
-        return <PostServiceGate onNavigate={setScreen} />;
-
-      default:
-        return userType === 'customer'
-          ? <Home onNavigate={setScreen} isAuthenticated={isAuthenticated} />
-          : <ProviderDashboard onNavigate={setScreen} />;
+    // ── AUTH SCREENS ──────────────────────────────────────────────────────
+    if (screen === 'login' || screen === 'signup') {
+      return <Auth initialMode={screen} onAuthSuccess={handleAuthSuccess} onNavigate={navigate} />;
     }
+
+    // ─── PUBLIC SCREENS (accessible by all) ────────────────────────────────
+    if (screen === 'terms')   return <TermsPage onNavigate={navigate} />;
+    if (screen === 'privacy') return <PrivacyPage onNavigate={navigate} />;
+    if (screen === 'help')    return <HelpCenter onNavigate={navigate} />;
+    if (screen === 'search')  return <SearchPage onNavigate={navigate} authStatus={authStatus} />;
+    if (screen === 'support') return <SupportPage onNavigate={navigate} authStatus={authStatus} />;
+
+    // ── STATE 1: GUEST ─────────────────────────────────────────────────────
+    if (authStatus === 'guest') {
+      return <GuestLanding onNavigate={navigate} />;
+    }
+
+    // ── STATE 2: CUSTOMER ──────────────────────────────────────────────────
+    if (authStatus === 'customer') {
+      switch (screen) {
+        case 'home':             return <CustomerDashboard onNavigate={navigate} user={user!} />;
+        case 'services':         return <Services onNavigate={navigate} />;
+        case 'service-detail':   return <ServiceDetail onNavigate={navigate} />;
+        case 'booking-checkout': return <BookingCheckout onNavigate={navigate} />;
+        case 'order-tracking':   return <OrderTracking onNavigate={navigate} />;
+        case 'profile':          return <Profile onNavigate={navigate} onLogout={handleLogout} user={user!} />;
+        case 'bookings':         return <Bookings onNavigate={navigate} />;
+        case 'settings':         return <Settings onNavigate={navigate} onLogout={handleLogout} user={user!} />;
+        default:                 return <CustomerDashboard onNavigate={navigate} user={user!} />;
+      }
+    }
+
+    // ── STATE 3: PROVIDER ──────────────────────────────────────────────────
+    if (authStatus === 'provider') {
+      switch (screen) {
+        case 'provider-dashboard':          return <ProviderDashboard onNavigate={navigate} user={user!} />;
+        case 'provider-profile':            return <ProviderProfile onNavigate={navigate} onLogout={handleLogout} />;
+        case 'provider-bookings':           return <Bookings onNavigate={navigate} isProvider />;
+        case 'provider-services':           return <Services onNavigate={navigate} isProvider />;
+        case 'provider-verification':       return <ProviderVerification onNavigate={navigate} />;
+        case 'provider-post-service':       return <PostServiceGate onNavigate={navigate} />;
+        case 'provider-gig-create':         return <GigCreateForm onNavigate={navigate} />;
+        case 'provider-wallet':             return <WalletPayout onNavigate={navigate} user={user!} />;
+        case 'provider-verification-wizard':return <VerificationWizard onNavigate={navigate} />;
+        case 'settings':                    return <Settings onNavigate={navigate} onLogout={handleLogout} user={user!} />;
+        default:                            return <ProviderDashboard onNavigate={navigate} user={user!} />;
+      }
+    }
+
+    return <GuestLanding onNavigate={navigate} />;
   };
 
-  const showNav = NAV_SCREENS.includes(screen);
-  const isAuthScreen = AUTH_SCREENS.includes(screen);
-  const isFullBleed = FULL_BLEED_SCREENS.includes(screen);
+  const isAuthScreen = screen === 'login' || screen === 'signup';
+  const isFullBleed  = FULL_BLEED_SCREENS.includes(screen);
+  const showCustomerNav = authStatus === 'customer' && CUSTOMER_NAV_SCREENS.includes(screen);
+  const showProviderNav = authStatus === 'provider' && PROVIDER_NAV_SCREENS.includes(screen);
+  const showNav = showCustomerNav || showProviderNav;
+  const showFooter = authStatus === 'guest' && !isAuthScreen;
 
-  // ── Auth layout (full screen, no chrome) ──────────────────────────────────
-  if (isAuthScreen) {
+  // ── Full-screen Auth / Landing ──────────────────────────────────────────
+  if (isAuthScreen || (authStatus === 'guest' && screen === 'landing')) {
     return (
       <GlobalErrorBoundary>
         <ProviderContextProvider>
           <AnimatePresence mode="wait">
-            <motion.div
-              key={screen}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="h-screen w-screen overflow-hidden"
-            >
-              <Auth initialMode={screen as 'login' | 'signup'} onAuthSuccess={handleAuthSuccess} />
+            <motion.div key={screen} {...pageTransition} className="min-h-screen w-full">
+              {renderScreen()}
             </motion.div>
           </AnimatePresence>
         </ProviderContextProvider>
@@ -137,115 +165,66 @@ export default function App() {
     );
   }
 
-  // ── Authenticated Provider layout ─────────────────────────────────────────
-  if (isAuthenticated && userType === 'provider') {
+  // ── Public pages (terms/privacy/help) with footer ──────────────────────
+  if (authStatus === 'guest') {
     return (
       <GlobalErrorBoundary>
         <ProviderContextProvider>
-          <div className="layout-grid min-h-screen" style={{ background: 'var(--color-background)' }}>
-            {showNav && (
-              <header className="[grid-area:header] z-50 sticky top-0">
-                <Navbar
-                  active={screen}
-                  onChange={setScreen}
-                  userType={userType}
-                  isAuthenticated={isAuthenticated}
-                />
-              </header>
-            )}
-
-            <main className="[grid-area:main]">
-              <ProviderLayout screen={screen} onNavigate={setScreen}>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={screen}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
-                  >
-                    {renderScreen()}
-                  </motion.div>
-                </AnimatePresence>
-              </ProviderLayout>
+          <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-background)' }}>
+            <Navbar screen={screen} onNavigate={navigate} authStatus={authStatus} user={user} />
+            <main className="flex-1">
+              <AnimatePresence mode="wait">
+                <motion.div key={screen} {...pageTransition}>
+                  {renderScreen()}
+                </motion.div>
+              </AnimatePresence>
             </main>
-
-            {showNav && (
-              <footer className="[grid-area:nav] md:hidden z-50 sticky bottom-0">
-                <BottomNav
-                  active={screen}
-                  onChange={setScreen}
-                  userType={userType}
-                  isAuthenticated={isAuthenticated}
-                />
-              </footer>
-            )}
+            <Footer onNavigate={navigate} />
           </div>
         </ProviderContextProvider>
       </GlobalErrorBoundary>
     );
   }
 
-  // ── Customer / Public layout ───────────────────────────────────────────────
+  // ── STATE 3: Provider — Sidebar Layout ─────────────────────────────────
+  if (authStatus === 'provider') {
+    return (
+      <GlobalErrorBoundary>
+        <ProviderContextProvider>
+          <ProviderSidebarLayout
+            screen={screen}
+            onNavigate={navigate}
+            user={user!}
+            onLogout={handleLogout}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div key={screen} {...pageTransition}>
+                {renderScreen()}
+              </motion.div>
+            </AnimatePresence>
+          </ProviderSidebarLayout>
+        </ProviderContextProvider>
+      </GlobalErrorBoundary>
+    );
+  }
+
+  // ── STATE 2: Customer — Top Nav + Bottom Nav layout ─────────────────────
   return (
     <GlobalErrorBoundary>
       <ProviderContextProvider>
-        <div className="layout-grid min-h-screen" style={{ background: 'var(--color-background)' }}>
-          {showNav && (
-            <header className="[grid-area:header] z-50 sticky top-0">
-              <Navbar
-                active={screen}
-                onChange={setScreen}
-                userType={userType}
-                isAuthenticated={isAuthenticated}
-              />
-            </header>
-          )}
-
-          <main className="[grid-area:main]">
-            {isAuthenticated ? (
-              <CustomerLayout screen={screen}>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={screen}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
-                  >
-                    {renderScreen()}
-                  </motion.div>
-                </AnimatePresence>
-              </CustomerLayout>
-            ) : (
-              /* Public / unauthenticated — no wrapper role badge */
-              <div className={isFullBleed ? 'h-full w-full' : 'px-fluid-md py-fluid-lg'}>
-                <div className={isFullBleed ? 'h-full w-full' : 'max-w-7xl mx-auto'}>
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={screen}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
-                    >
-                      {renderScreen()}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
-            )}
+        <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-background)' }}>
+          <Navbar screen={screen} onNavigate={navigate} authStatus={authStatus} user={user} />
+          <main className="flex-1">
+            <CustomerLayout screen={screen}>
+              <AnimatePresence mode="wait">
+                <motion.div key={screen} {...pageTransition}>
+                  {renderScreen()}
+                </motion.div>
+              </AnimatePresence>
+            </CustomerLayout>
           </main>
-
           {showNav && (
-            <footer className="[grid-area:nav] md:hidden z-50 sticky bottom-0">
-              <BottomNav
-                active={screen}
-                onChange={setScreen}
-                userType={userType}
-                isAuthenticated={isAuthenticated}
-              />
-            </footer>
+            <BottomNav screen={screen} onNavigate={navigate} authStatus={authStatus} />
           )}
         </div>
       </ProviderContextProvider>

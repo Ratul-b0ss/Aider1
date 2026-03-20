@@ -1,308 +1,165 @@
 import React, { useState } from 'react';
-import { Search, Star, Clock, Shield, SlidersHorizontal, ArrowRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
+import {
+  Search, Star, MapPin, Filter, ChevronDown, SlidersHorizontal,
+  Sparkles, Wrench, Brush, Truck, Flower2, Paintbrush, Heart, ArrowRight,
+} from 'lucide-react';
 import { Screen } from '../../types';
 
 interface ServicesProps {
   onNavigate: (s: Screen) => void;
+  isProvider?: boolean;
 }
 
-const CATEGORIES = ['All', 'Cleaning', 'Repair', 'Beauty', 'Moving', 'Gardening', 'Painting'];
-
-const SERVICES = [
-  {
-    id: '1',
-    name: 'Deep Home Cleaning',
-    category: 'Cleaning',
-    provider: 'Sparkle Pros',
-    rating: 4.9,
-    reviews: 128,
-    price: 45,
-    image: 'https://picsum.photos/seed/cleaning/400/300',
-    description: 'Complete home sanitization including kitchen, bathrooms, and windows.',
-    badge: 'Most Booked',
-    badgeBg: '#FFF4EC',
-    badgeColor: '#EA580C',
-  },
-  {
-    id: '2',
-    name: 'AC Maintenance',
-    category: 'Repair',
-    provider: 'CoolAir Tech',
-    rating: 4.8,
-    reviews: 85,
-    price: 60,
-    image: 'https://picsum.photos/seed/ac/400/300',
-    description: 'Professional AC servicing, gas refilling, and filter cleaning.',
-    badge: 'Top Rated',
-    badgeBg: '#EEFAEF',
-    badgeColor: '#16A34A',
-  },
-  {
-    id: '3',
-    name: 'Professional Makeup',
-    category: 'Beauty',
-    provider: 'Glow Studio',
-    rating: 4.7,
-    reviews: 210,
-    price: 75,
-    image: 'https://picsum.photos/seed/makeup/400/300',
-    description: 'Expert makeup services for weddings, parties, and special events.',
-    badge: null,
-    badgeBg: '',
-    badgeColor: '',
-  },
-  {
-    id: '4',
-    name: 'Furniture Moving',
-    category: 'Moving',
-    provider: 'Swift Movers',
-    rating: 4.6,
-    reviews: 156,
-    price: 120,
-    image: 'https://picsum.photos/seed/moving/400/300',
-    description: 'Safe and secure furniture transportation with packing services.',
-    badge: null,
-    badgeBg: '',
-    badgeColor: '',
-  },
+const ALL_SERVICES = [
+  { id: '1', title: 'Deep Home Cleaning',     provider: 'Sparkle Pros',    rating: 4.9, reviews: 128, price: 45, category: 'Cleaning',  img: 'https://picsum.photos/seed/svc1/600/400',  tag: 'Popular' },
+  { id: '2', title: 'AC Maintenance',          provider: 'CoolAir Tech',    rating: 4.8, reviews: 85,  price: 60, category: 'Repair',    img: 'https://picsum.photos/seed/svc2/600/400',  tag: 'Top Rated' },
+  { id: '3', title: 'Garden Care Package',     provider: 'GreenThumb Co.',  rating: 4.7, reviews: 64,  price: 35, category: 'Gardening', img: 'https://picsum.photos/seed/svc3/600/400',  tag: 'New' },
+  { id: '4', title: 'Interior Painting',       provider: 'ArtHouse Pros',   rating: 4.6, reviews: 52,  price: 120, category: 'Painting', img: 'https://picsum.photos/seed/svc4/600/400',  tag: '' },
+  { id: '5', title: 'Hair & Nail Studio',      provider: 'Glam Mobile',     rating: 4.9, reviews: 201, price: 55, category: 'Beauty',   img: 'https://picsum.photos/seed/svc5/600/400',  tag: 'Popular' },
+  { id: '6', title: 'Full Home Move',          provider: 'MoversPro',       rating: 4.5, reviews: 43,  price: 250, category: 'Moving',  img: 'https://picsum.photos/seed/svc6/600/400',  tag: '' },
 ];
 
-export const Services = ({ onNavigate }: ServicesProps) => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+const CATEGORIES = [
+  { id: 'all',       name: 'All',       icon: SlidersHorizontal },
+  { id: 'cleaning',  name: 'Cleaning',  icon: Sparkles },
+  { id: 'repair',    name: 'Repair',    icon: Wrench },
+  { id: 'beauty',    name: 'Beauty',    icon: Brush },
+  { id: 'moving',    name: 'Moving',    icon: Truck },
+  { id: 'gardening', name: 'Gardening', icon: Flower2 },
+  { id: 'painting',  name: 'Painting',  icon: Paintbrush },
+];
 
-  const filteredServices = SERVICES.filter((service) => {
-    const matchesCategory = selectedCategory === 'All' || service.category === selectedCategory;
-    const matchesSearch =
-      service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      service.provider.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+export const Services = ({ onNavigate, isProvider = false }: ServicesProps) => {
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('all');
+  const [liked, setLiked] = useState<string[]>([]);
+
+  const filtered = ALL_SERVICES.filter(s => {
+    const matchSearch = !search || s.title.toLowerCase().includes(search.toLowerCase());
+    const matchCat    = category === 'all' || s.category.toLowerCase() === category;
+    return matchSearch && matchCat;
   });
 
   return (
-    <div className="pb-24 pt-2" style={{ minHeight: '80vh' }}>
-
-      {/* ── Page Header ── */}
-      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between mb-8">
-        <div>
-          <p
-            className="text-xs font-semibold uppercase tracking-widest mb-1.5"
-            style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}
-          >
-            Marketplace
-          </p>
-          <h1
-            className="text-3xl md:text-4xl font-extrabold tracking-tight"
-            style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}
-          >
-            Find Services
-          </h1>
-        </div>
-
-        {/* Search */}
-        <div className="w-full md:w-80 lg:w-96">
-          <div
-            className="flex items-center gap-3 px-4 py-3 rounded-xl"
-            style={{
-              background: 'var(--color-surface)',
-              border: '1.5px solid var(--color-border)',
-              boxShadow: 'var(--shadow-xs)',
-            }}
-          >
-            <Search size={17} style={{ color: 'var(--color-ink-muted)' }} strokeWidth={2} className="shrink-0" />
-            <input
-              type="text"
-              placeholder="Search services or providers..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-transparent text-sm outline-none"
-              style={{ color: 'var(--color-ink)' }}
-            />
-          </div>
-        </div>
+    <div className="space-y-5">
+      {/* ── Header ── */}
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}>
+          Explore
+        </p>
+        <h1 className="text-2xl font-extrabold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+          {isProvider ? 'Manage Services' : 'All Services'}
+        </h1>
       </div>
 
-      {/* ── Category Pills ── */}
-      <div className="no-scrollbar flex items-center gap-2 overflow-x-auto pb-1 mb-8">
-        {CATEGORIES.map((cat) => {
-          const active = selectedCategory === cat;
-          return (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className="whitespace-nowrap px-5 py-2.5 rounded-full text-[0.8125rem] font-semibold transition-all shrink-0"
-              style={{
-                fontFamily: 'var(--font-display)',
-                background: active ? 'var(--color-deep)' : 'var(--color-surface)',
-                color: active ? '#fff' : 'var(--color-ink-muted)',
-                border: `1.5px solid ${active ? 'var(--color-deep)' : 'var(--color-border)'}`,
-                boxShadow: active ? 'var(--shadow-md)' : 'none',
-              }}
-            >
-              {cat}
-            </button>
-          );
-        })}
+      {/* Search */}
+      <div
+        className="flex items-center gap-3 px-4 py-3 rounded-2xl"
+        style={{ background: 'var(--color-surface)', border: '1.5px solid var(--color-border)', boxShadow: 'var(--shadow-sm)' }}
+      >
+        <Search size={16} style={{ color: 'var(--color-ink-muted)' }} />
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search services..."
+          className="flex-1 bg-transparent text-sm outline-none"
+          style={{ color: 'var(--color-ink)' }}
+        />
+        <button
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
+          style={{ background: 'var(--color-neutral-100)', color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}
+        >
+          <Filter size={12} /> Filter
+        </button>
       </div>
 
-      {/* ── Services Grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        <AnimatePresence mode="popLayout">
-          {filteredServices.map((service, idx) => (
-            <motion.div
-              key={service.id}
-              layout
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              className="group flex flex-col overflow-hidden rounded-2xl"
-              style={{
-                background: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease',
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.boxShadow = 'var(--shadow-xl)';
-                el.style.transform = 'translateY(-3px)';
-                el.style.borderColor = 'var(--color-neutral-200)';
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.boxShadow = 'var(--shadow-sm)';
-                el.style.transform = 'translateY(0)';
-                el.style.borderColor = 'var(--color-border)';
-              }}
-            >
-              {/* Image */}
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={service.image}
-                  alt={service.name}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  referrerPolicy="no-referrer"
-                />
-                {/* Category chip */}
-                <div
-                  className="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[11px] font-semibold"
-                  style={{
-                    background: 'rgba(255,255,255,0.92)',
-                    backdropFilter: 'blur(8px)',
-                    color: 'var(--color-ink)',
-                    fontFamily: 'var(--font-display)',
-                  }}
-                >
-                  {service.category}
-                </div>
-                {/* Rating */}
-                <div
-                  className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
-                  style={{
-                    background: 'var(--color-primary)',
-                    fontFamily: 'var(--font-display)',
-                  }}
-                >
-                  <Star size={11} className="fill-white text-white" />
-                  <span className="text-[11px] font-bold text-white">{service.rating}</span>
-                </div>
-                {/* Badge */}
-                {service.badge && (
-                  <div
-                    className="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg text-[11px] font-semibold"
-                    style={{ background: service.badgeBg, color: service.badgeColor, fontFamily: 'var(--font-display)' }}
-                  >
-                    {service.badge}
-                  </div>
-                )}
-              </div>
-
-              {/* Body */}
-              <div className="flex flex-col flex-1 p-5 gap-4">
-                <div className="space-y-1.5">
-                  <h3
-                    className="text-base font-semibold leading-snug"
-                    style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}
-                  >
-                    {service.name}
-                  </h3>
-                  <p className="text-sm font-medium" style={{ color: 'var(--color-ink-muted)' }}>
-                    by {service.provider}
-                  </p>
-                  <p className="text-sm leading-relaxed line-clamp-2" style={{ color: 'var(--color-ink-muted)' }}>
-                    {service.description}
-                  </p>
-                </div>
-
-                {/* Trust badges */}
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1.5" style={{ color: 'var(--color-ink-muted)' }}>
-                    <Clock size={13} strokeWidth={2} />
-                    <span className="text-[11px] font-medium" style={{ fontFamily: 'var(--font-display)' }}>Fast Service</span>
-                  </div>
-                  <div className="flex items-center gap-1.5" style={{ color: 'var(--color-ink-muted)' }}>
-                    <Shield size={13} strokeWidth={2} />
-                    <span className="text-[11px] font-medium" style={{ fontFamily: 'var(--font-display)' }}>Verified</span>
-                  </div>
-                </div>
-
-                {/* Price + CTA */}
-                <div
-                  className="flex items-center justify-between pt-4 mt-auto"
-                  style={{ borderTop: '1px solid var(--color-border)' }}
-                >
-                  <div>
-                    <span className="text-xl font-extrabold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
-                      ${service.price}
-                    </span>
-                    <span className="text-xs ml-1 font-medium" style={{ color: 'var(--color-ink-muted)' }}>/hr</span>
-                  </div>
-                  <button
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                    style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
-                  >
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-
-      {/* ── Empty State ── */}
-      {filteredServices.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div
-            className="h-20 w-20 rounded-2xl flex items-center justify-center mb-6"
-            style={{ background: 'var(--color-neutral-100)' }}
-          >
-            <Search size={32} style={{ color: 'var(--color-neutral-400)' }} strokeWidth={1.5} />
-          </div>
-          <h3
-            className="text-xl font-bold mb-2"
-            style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}
-          >
-            No services found
-          </h3>
-          <p className="text-sm mb-8 max-w-xs" style={{ color: 'var(--color-ink-muted)' }}>
-            Try adjusting your search or selecting a different category.
-          </p>
+      {/* Category pills */}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        {CATEGORIES.map(({ id, name, icon: Icon }) => (
           <button
-            onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
+            key={id}
+            onClick={() => setCategory(id)}
+            className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all"
             style={{
-              background: 'var(--color-deep)',
-              color: '#fff',
+              background: category === id ? 'var(--color-deep)' : 'var(--color-neutral-100)',
+              color: category === id ? '#fff' : 'var(--color-ink)',
               fontFamily: 'var(--font-display)',
             }}
           >
-            Clear Filters <ArrowRight size={15} />
+            <Icon size={12} />
+            {name}
           </button>
-        </div>
-      )}
+        ))}
+      </div>
+
+      {/* Service Grid */}
+      <p className="text-xs font-medium" style={{ color: 'var(--color-ink-muted)' }}>
+        {filtered.length} services found
+      </p>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {filtered.map((svc, idx) => (
+          <motion.div
+            key={svc.id}
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: idx * 0.06 }}
+            onClick={() => onNavigate(isProvider ? 'provider-services' : 'service-detail')}
+            className="group rounded-2xl overflow-hidden cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg"
+            style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-xs)' }}
+          >
+            <div className="relative h-44 overflow-hidden">
+              <img
+                src={svc.img}
+                alt={svc.title}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              {svc.tag && (
+                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+                  style={{ background: 'rgba(255,255,255,0.95)', color: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}>
+                  {svc.tag}
+                </div>
+              )}
+              <button
+                onClick={e => { e.stopPropagation(); setLiked(l => l.includes(svc.id) ? l.filter(x => x !== svc.id) : [...l, svc.id]); }}
+                className="absolute top-3 right-3 h-8 w-8 rounded-lg flex items-center justify-center"
+                style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)' }}
+              >
+                <Heart size={13} className={liked.includes(svc.id) ? 'fill-red-500 text-red-500' : 'text-gray-600'} />
+              </button>
+            </div>
+            <div className="p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider mb-1" style={{ color: 'var(--color-ink-muted)' }}>
+                {svc.category}
+              </p>
+              <h3 className="text-sm font-bold mb-1 line-clamp-1" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+                {svc.title}
+              </h3>
+              <p className="text-xs mb-3" style={{ color: 'var(--color-ink-muted)' }}>{svc.provider}</p>
+              <div className="flex items-center gap-2 mb-3">
+                <Star size={11} className="fill-yellow-400 text-yellow-400" />
+                <span className="text-xs font-bold" style={{ color: 'var(--color-ink)' }}>{svc.rating}</span>
+                <span className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>({svc.reviews})</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-base font-extrabold" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-display)' }}>
+                  ${svc.price}
+                </span>
+                {!isProvider && (
+                  <button
+                    onClick={e => { e.stopPropagation(); onNavigate('booking-checkout'); }}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
+                    style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+                  >
+                    Book <ArrowRight size={11} />
+                  </button>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 };

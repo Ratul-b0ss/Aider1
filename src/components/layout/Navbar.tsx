@@ -1,287 +1,309 @@
 import React, { useState, useEffect } from 'react';
-import { Home as HomeIcon, LayoutGrid, Calendar, User, BarChart3, Package, Bell, Menu, X, Search, HelpCircle, ShieldCheck } from 'lucide-react';
-import { Screen, UserType } from '../../types';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+  Search, Bell, Menu, X, Settings, LogOut, User,
+  LayoutDashboard, BookOpen, Briefcase, HelpCircle,
+  Home, Star, Wallet,
+} from 'lucide-react';
+import { Screen, AuthUser } from '../../types';
+
+type AuthStatus = 'guest' | 'customer' | 'provider';
 
 interface NavbarProps {
-  active: Screen;
-  onChange: (s: Screen) => void;
-  userType: UserType;
-  isAuthenticated: boolean;
+  screen: Screen;
+  onNavigate: (s: Screen) => void;
+  authStatus: AuthStatus;
+  user: AuthUser | null;
 }
 
-export const Navbar = ({ active, onChange, userType, isAuthenticated }: NavbarProps) => {
+// ── Context-aware nav links per role ──────────────────────────────────────────
+const GUEST_LINKS = [
+  { label: 'How it Works', screen: 'landing' as Screen, icon: undefined as any },
+  { label: 'Help', screen: 'help' as Screen, icon: undefined as any },
+  { label: 'Terms', screen: 'terms' as Screen, icon: undefined as any },
+];
+
+const CUSTOMER_LINKS = [
+  { label: 'Dashboard',  screen: 'home' as Screen,     icon: Home },
+  { label: 'Services',   screen: 'services' as Screen, icon: Search },
+  { label: 'Bookings',   screen: 'bookings' as Screen, icon: BookOpen },
+  { label: 'Support',    screen: 'support' as Screen,  icon: HelpCircle },
+];
+
+const PROVIDER_LINKS = [
+  { label: 'Dashboard',  screen: 'provider-dashboard' as Screen, icon: LayoutDashboard },
+  { label: 'Services',   screen: 'provider-services' as Screen,  icon: Briefcase },
+  { label: 'Bookings',   screen: 'provider-bookings' as Screen,  icon: BookOpen },
+  { label: 'Wallet',     screen: 'provider-wallet' as Screen,    icon: Wallet },
+];
+
+export const Navbar = ({ screen, onNavigate, authStatus, user }: NavbarProps) => {
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 12);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const customerTabs = [
-    { id: 'home',     label: 'Home',     icon: HomeIcon },
-    { id: 'services', label: 'Services', icon: LayoutGrid },
-    { id: 'search',   label: 'Search',   icon: Search },
-    { id: 'bookings', label: 'Bookings', icon: Calendar },
-    { id: 'profile',  label: 'Profile',  icon: User },
-  ];
+  const links = authStatus === 'provider'
+    ? PROVIDER_LINKS
+    : authStatus === 'customer'
+    ? CUSTOMER_LINKS
+    : GUEST_LINKS;
 
-  const providerTabs = [
-    { id: 'provider-dashboard',     label: 'Dashboard',     icon: BarChart3 },
-    { id: 'provider-bookings',      label: 'Bookings',      icon: Calendar },
-    { id: 'provider-services',      label: 'Services',      icon: Package },
-    { id: 'provider-verification',  label: 'Verify',        icon: ShieldCheck },
-    { id: 'provider-profile',       label: 'Profile',       icon: User },
-  ];
+  const profileScreen: Screen = authStatus === 'provider' ? 'provider-profile' : 'profile';
+  const settingsScreen: Screen = 'settings';
 
-  const tabs = userType === 'customer' ? customerTabs : providerTabs;
-
-  const handleNavClick = (screen: string) => {
-    onChange(screen as Screen);
-    setMobileMenuOpen(false);
-  };
-
-  const isTabActive = (tabId: string) =>
-    active === tabId ||
-    (tabId === 'profile' && active === 'settings') ||
-    (tabId === 'provider-profile' && active === 'settings');
+  const initials = user
+    ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+    : '';
 
   return (
-    <>
-      <nav
-        className={`
-          relative z-50 w-full transition-all duration-300
-          ${scrolled
-            ? 'bg-white/90 backdrop-blur-xl shadow-sm border-b border-[var(--color-border)]'
-            : 'bg-white border-b border-[var(--color-border)]'
-          }
-        `}
-      >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 md:px-8"
-          style={{ height: scrolled ? '60px' : '68px', transition: 'height 0.3s ease' }}
-        >
+    <nav
+      className="sticky top-0 z-50 w-full transition-all duration-300"
+      style={{
+        background: scrolled
+          ? 'rgba(247,248,247,0.92)'
+          : 'rgba(247,248,247,0.98)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: scrolled
+          ? '1px solid var(--color-border)'
+          : '1px solid transparent',
+        boxShadow: scrolled ? 'var(--shadow-sm)' : 'none',
+      }}
+    >
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <div className="flex h-16 items-center justify-between gap-4">
+
           {/* ── Logo ── */}
           <button
-            onClick={() => handleNavClick(userType === 'customer' ? 'home' : 'provider-dashboard')}
-            className="flex items-center gap-0.5 group outline-none"
-            aria-label="Go to home"
+            onClick={() => onNavigate(
+              authStatus === 'provider' ? 'provider-dashboard'
+              : authStatus === 'customer' ? 'home'
+              : 'landing'
+            )}
+            className="flex items-center gap-2.5 shrink-0"
           >
-            <span
-              className="font-display text-[1.5rem] font-extrabold tracking-tight leading-none"
-              style={{ color: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+            <div
+              className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, var(--color-deep) 0%, var(--color-primary) 100%)' }}
             >
-              AIDER
-            </span>
+              <Star size={14} className="text-white" strokeWidth={2.5} />
+            </div>
             <span
-              className="text-[1.5rem] font-extrabold leading-none"
-              style={{ color: 'var(--color-primary)' }}
+              className="text-base font-extrabold tracking-tight hidden sm:block"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}
             >
-              .
+              Servify
             </span>
           </button>
 
-          {/* ── Desktop Nav Links ── */}
+          {/* ── Desktop Links ── */}
           <div className="hidden md:flex items-center gap-1">
-            {isAuthenticated
-              ? tabs.map((tab) => {
-                  const active_ = isTabActive(tab.id);
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => handleNavClick(tab.id)}
-                      className={`
-                        flex items-center gap-2 px-4 py-2 rounded-xl text-[0.875rem] font-semibold
-                        transition-all duration-150
-                        ${active_
-                          ? 'bg-[var(--color-primary-light)] text-[var(--color-deep)]'
-                          : 'text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)]'
-                        }
-                      `}
-                      style={{ fontFamily: 'var(--font-display)' }}
-                    >
-                      <tab.icon size={15} strokeWidth={active_ ? 2.5 : 2} />
-                      {tab.label}
-                    </button>
-                  );
-                })
-              : (
-                <>
-                  <button
-                    onClick={() => handleNavClick('services')}
-                    className="px-4 py-2 rounded-xl text-[0.875rem] font-semibold text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
-                    style={{ fontFamily: 'var(--font-display)' }}
-                  >
-                    Services
-                  </button>
-                  <button
-                    onClick={() => handleNavClick('search')}
-                    className="px-4 py-2 rounded-xl text-[0.875rem] font-semibold text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
-                    style={{ fontFamily: 'var(--font-display)' }}
-                  >
-                    Find Pros
-                  </button>
-                  <button
-                    onClick={() => handleNavClick('support')}
-                    className="px-4 py-2 rounded-xl text-[0.875rem] font-semibold text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
-                    style={{ fontFamily: 'var(--font-display)' }}
-                  >
-                    Support
-                  </button>
-                  <button
-                    onClick={() => handleNavClick('signup')}
-                    className="px-4 py-2 rounded-xl text-[0.875rem] font-semibold text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
-                    style={{ fontFamily: 'var(--font-display)' }}
-                  >
-                    Become a Provider
-                  </button>
-                </>
-              )
-            }
+            {links.map(({ label, screen: s, icon: Icon }: any) => (
+              <button
+                key={label}
+                onClick={() => onNavigate(s)}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150"
+                style={{
+                  color: screen === s ? 'var(--color-deep)' : 'var(--color-ink-muted)',
+                  background: screen === s ? 'var(--color-primary-light)' : 'transparent',
+                  fontFamily: 'var(--font-display)',
+                }}
+              >
+                {Icon && <Icon size={14} strokeWidth={2} />}
+                {label}
+              </button>
+            ))}
           </div>
 
-          {/* ── Desktop Actions ── */}
-          <div className="hidden md:flex items-center gap-3">
-            {isAuthenticated ? (
-              <>
-                {/* Search shortcut */}
-                <button
-                  onClick={() => handleNavClick('search')}
-                  className="relative h-9 w-9 flex items-center justify-center rounded-xl text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
-                  aria-label="Search"
-                >
-                  <Search size={17} strokeWidth={2} />
-                </button>
-
-                {/* Support */}
-                <button
-                  onClick={() => handleNavClick('support')}
-                  className="relative h-9 w-9 flex items-center justify-center rounded-xl text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
-                  aria-label="Support"
-                >
-                  <HelpCircle size={17} strokeWidth={2} />
-                </button>
-
-                {/* Notification Bell */}
-                <button
-                  className="relative h-9 w-9 flex items-center justify-center rounded-xl text-[var(--color-ink-muted)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-ink)] transition-all"
-                  aria-label="Notifications"
-                >
-                  <Bell size={18} strokeWidth={2} />
-                  <span
-                    className="absolute right-2 top-2 h-2 w-2 rounded-full"
-                    style={{ background: 'var(--color-primary)' }}
-                  />
-                </button>
-
-                {/* Avatar */}
-                <button
-                  onClick={() => handleNavClick(userType === 'customer' ? 'profile' : 'provider-profile')}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl text-[0.8125rem] font-bold text-white transition-all hover:opacity-90 hover:shadow-md"
-                  style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
-                  aria-label="Profile"
-                >
-                  {userType === 'customer' ? 'JD' : 'SP'}
-                </button>
-              </>
-            ) : (
+          {/* ── Right Controls ── */}
+          <div className="flex items-center gap-2">
+            {authStatus === 'guest' ? (
               <>
                 <button
-                  onClick={() => handleNavClick('login')}
-                  className="px-4 py-2 text-[0.875rem] font-semibold transition-colors"
+                  onClick={() => onNavigate('login')}
+                  className="hidden sm:block px-4 py-2 rounded-lg text-sm font-semibold transition-all"
                   style={{ color: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
                 >
                   Log In
                 </button>
                 <button
-                  onClick={() => handleNavClick('signup')}
-                  className="px-5 py-2 rounded-xl text-[0.875rem] font-semibold text-white transition-all hover:opacity-90 hover:shadow-md"
-                  style={{
-                    background: 'var(--color-deep)',
-                    fontFamily: 'var(--font-display)',
-                  }}
+                  onClick={() => onNavigate('signup')}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:opacity-90"
+                  style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
                 >
                   Get Started
                 </button>
+              </>
+            ) : (
+              <>
+                {/* Search icon */}
                 <button
-                  onClick={() => handleNavClick('signup')}
-                  className="px-5 py-2 rounded-xl text-[0.875rem] font-semibold transition-all hover:shadow-sm"
+                  onClick={() => onNavigate('search')}
+                  className="h-9 w-9 rounded-lg flex items-center justify-center transition-colors"
+                  style={{ color: 'var(--color-ink-muted)', background: 'var(--color-neutral-100)' }}
+                >
+                  <Search size={16} />
+                </button>
+
+                {/* Notification Bell */}
+                <button
+                  className="h-9 w-9 rounded-lg flex items-center justify-center relative transition-colors"
+                  style={{ color: 'var(--color-ink-muted)', background: 'var(--color-neutral-100)' }}
+                >
+                  <Bell size={16} />
+                  <span
+                    className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full"
+                    style={{ background: 'var(--color-primary)' }}
+                  />
+                </button>
+
+                {/* Avatar + Profile Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setProfileOpen(o => !o)}
+                    className="h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold text-white transition-all hover:opacity-90"
+                    style={{ background: 'linear-gradient(135deg, var(--color-deep) 0%, #006b4e 100%)' }}
+                  >
+                    {initials || <User size={15} />}
+                  </button>
+
+                  <AnimatePresence>
+                    {profileOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-full mt-2 w-56 rounded-2xl overflow-hidden"
+                        style={{
+                          background: 'var(--color-surface)',
+                          border: '1px solid var(--color-border)',
+                          boxShadow: 'var(--shadow-xl)',
+                        }}
+                        onMouseLeave={() => setProfileOpen(false)}
+                      >
+                        {/* User info */}
+                        <div className="p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+                          <p className="text-sm font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>
+                            {user?.name}
+                          </p>
+                          <p className="text-xs mt-0.5 truncate" style={{ color: 'var(--color-ink-muted)' }}>
+                            {user?.email}
+                          </p>
+                          <span
+                            className="inline-block mt-2 px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize"
+                            style={{
+                              background: authStatus === 'provider' ? 'var(--color-primary-light)' : '#EEF6FF',
+                              color: authStatus === 'provider' ? 'var(--color-deep)' : '#2563EB',
+                              fontFamily: 'var(--font-display)',
+                            }}
+                          >
+                            {authStatus}
+                          </span>
+                        </div>
+
+                        {/* Links */}
+                        {[
+                          { icon: User, label: 'Profile', screen: profileScreen },
+                          { icon: Settings, label: 'Settings', screen: settingsScreen as Screen },
+                          { icon: HelpCircle, label: 'Help Center', screen: 'help' as Screen },
+                        ].map(({ icon: Icon, label, screen: s }) => (
+                          <button
+                            key={label}
+                            onClick={() => { onNavigate(s); setProfileOpen(false); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors hover:bg-neutral-50"
+                            style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}
+                          >
+                            <Icon size={15} style={{ color: 'var(--color-ink-muted)' }} />
+                            {label}
+                          </button>
+                        ))}
+
+                        <div className="border-t" style={{ borderColor: 'var(--color-border)' }} />
+                        <button
+                          onClick={() => { /* logout handled by parent */ setProfileOpen(false); }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50"
+                          style={{ fontFamily: 'var(--font-display)' }}
+                        >
+                          <LogOut size={15} />
+                          Sign Out
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </>
+            )}
+
+            {/* Mobile Menu Toggle */}
+            <button
+              className="md:hidden h-9 w-9 rounded-lg flex items-center justify-center transition-colors"
+              style={{ color: 'var(--color-ink)', background: 'var(--color-neutral-100)' }}
+              onClick={() => setMobileOpen(o => !o)}
+            >
+              {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Mobile Menu Drawer ── */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden overflow-hidden border-t"
+            style={{
+              borderColor: 'var(--color-border)',
+              background: 'var(--color-surface)',
+            }}
+          >
+            <div className="px-5 py-4 flex flex-col gap-1">
+              {links.map(({ label, screen: s, icon: Icon }: any) => (
+                <button
+                  key={label}
+                  onClick={() => { onNavigate(s); setMobileOpen(false); }}
+                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-left transition-colors"
                   style={{
-                    border: '1.5px solid var(--color-primary)',
-                    color: 'var(--color-primary)',
+                    color: screen === s ? 'var(--color-deep)' : 'var(--color-ink)',
+                    background: screen === s ? 'var(--color-primary-light)' : 'transparent',
                     fontFamily: 'var(--font-display)',
                   }}
                 >
-                  Post a Job
+                  {Icon && <Icon size={16} style={{ color: screen === s ? 'var(--color-primary)' : 'var(--color-ink-muted)' }} />}
+                  {label}
                 </button>
-              </>
-            )}
-          </div>
-
-          {/* ── Mobile Hamburger (unauthenticated only) ── */}
-          {!isAuthenticated && (
-            <button
-              className="md:hidden h-9 w-9 flex items-center justify-center rounded-xl text-[var(--color-deep)] hover:bg-[var(--color-neutral-50)] transition-all"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-            >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          )}
-        </div>
-
-        {/* ── Mobile Dropdown (unauthenticated) ── */}
-        {mobileMenuOpen && !isAuthenticated && (
-          <div
-            className="md:hidden absolute top-full left-0 w-full bg-white border-b border-[var(--color-border)] shadow-lg py-4 px-5 flex flex-col gap-1 z-50"
-            style={{ boxShadow: 'var(--shadow-lg)' }}
-          >
-            {[
-              { label: 'Services', action: () => handleNavClick('services') },
-              { label: 'Find Pros', action: () => handleNavClick('search') },
-              { label: 'Support', action: () => handleNavClick('support') },
-              { label: 'Become a Provider', action: () => handleNavClick('signup') },
-            ].map(({ label, action }) => (
-              <button
-                key={label}
-                onClick={action}
-                className="text-left px-3 py-2.5 rounded-xl text-[0.9375rem] font-semibold text-[var(--color-ink)] hover:bg-[var(--color-neutral-50)] transition-colors"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                {label}
-              </button>
-            ))}
-
-            <div className="h-px w-full my-2" style={{ background: 'var(--color-border)' }} />
-
-            <button
-              onClick={() => handleNavClick('login')}
-              className="text-left px-3 py-2.5 rounded-xl text-[0.9375rem] font-semibold transition-colors"
-              style={{ color: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
-            >
-              Log In
-            </button>
-            <button
-              onClick={() => handleNavClick('signup')}
-              className="w-full py-3 rounded-xl text-[0.9375rem] font-semibold text-white text-center transition-all hover:opacity-90"
-              style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
-            >
-              Get Started Free
-            </button>
-            <button
-              onClick={() => handleNavClick('signup')}
-              className="w-full py-3 rounded-xl text-[0.9375rem] font-semibold text-center transition-all"
-              style={{
-                border: '1.5px solid var(--color-primary)',
-                color: 'var(--color-primary)',
-                fontFamily: 'var(--font-display)',
-              }}
-            >
-              Post a Job
-            </button>
-          </div>
+              ))}
+              {authStatus === 'guest' && (
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => { onNavigate('login'); setMobileOpen(false); }}
+                    className="flex-1 py-3 rounded-xl text-sm font-semibold"
+                    style={{ border: '1.5px solid var(--color-border)', color: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+                  >
+                    Log In
+                  </button>
+                  <button
+                    onClick={() => { onNavigate('signup'); setMobileOpen(false); }}
+                    className="flex-1 py-3 rounded-xl text-sm font-semibold text-white"
+                    style={{ background: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+                  >
+                    Get Started
+                  </button>
+                </div>
+              )}
+            </div>
+          </motion.div>
         )}
-      </nav>
-    </>
+      </AnimatePresence>
+    </nav>
   );
 };
