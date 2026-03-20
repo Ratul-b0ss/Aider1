@@ -269,9 +269,9 @@ export const WalletPayout = ({ onNavigate, user }: WalletPayoutProps) => {
                 disabled={!payoutAmount}
                 className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-40"
                 style={{
-                  background: 'linear-gradient(135deg, var(--color-primary) 0%, #a3d900 100%)',
+                  background: 'linear-gradient(135deg, var(--color-primary) 0%, #D1F843 100%)',
                   fontFamily: 'var(--font-display)',
-                  boxShadow: '0 4px 14px rgba(132,183,1,0.3)',
+                  boxShadow: '0 4px 14px rgba(209,248,67,0.3)',
                 }}
               >
                 <ArrowDownToLine size={15} />

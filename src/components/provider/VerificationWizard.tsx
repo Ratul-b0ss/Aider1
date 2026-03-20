@@ -119,7 +119,7 @@ export const VerificationWizard = ({ onNavigate }: VerificationWizardProps) => {
       <div className="h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--color-neutral-100)' }}>
         <motion.div
           className="h-full rounded-full"
-          style={{ background: 'linear-gradient(90deg, var(--color-primary) 0%, #a3d900 100%)' }}
+          style={{ background: 'linear-gradient(90deg, var(--color-primary) 0%, #D1F843 100%)' }}
           animate={{ width: `${completionPct}%` }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
         />
@@ -403,7 +403,7 @@ export const VerificationWizard = ({ onNavigate }: VerificationWizardProps) => {
           className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
           style={{
             background: step === 5
-              ? 'linear-gradient(135deg, var(--color-primary) 0%, #a3d900 100%)'
+              ? 'linear-gradient(135deg, var(--color-primary) 0%, #D1F843 100%)'
               : 'linear-gradient(135deg, var(--color-deep) 0%, #005840 100%)',
             fontFamily: 'var(--font-display)',
             boxShadow: 'var(--shadow-md)',

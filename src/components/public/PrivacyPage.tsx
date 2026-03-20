@@ -84,7 +84,7 @@ export const PrivacyPage = ({ onNavigate }: PrivacyPageProps) => {
           style={{ background: 'var(--color-primary-light)', border: '1px solid color-mix(in srgb, var(--color-primary) 15%, transparent)' }}
         >
           <p className="text-sm leading-relaxed" style={{ color: 'var(--color-ink)' }}>
-            Servify ("we", "us", or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform. Please read this policy carefully. By using Servify, you consent to the practices described herein.
+            AiDER ("we", "us", or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform. Please read this policy carefully. By using AiDER, you consent to the practices described herein.
           </p>
         </motion.div>
 
@@ -127,7 +127,7 @@ export const PrivacyPage = ({ onNavigate }: PrivacyPageProps) => {
               Questions about your privacy?
             </p>
             <p className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>
-              Contact our Data Protection Officer at privacy@servify.com
+              Contact our Data Protection Officer at privacy@aider.com
             </p>
           </div>
           <button

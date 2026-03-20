@@ -11,7 +11,7 @@ const SECTIONS = [
   {
     icon: FileText,
     title: '1. Acceptance of Terms',
-    content: `By accessing or using the Servify platform ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not access or use the Service. These Terms apply to all visitors, users, and others who access or use the Service.`,
+    content: `By accessing or using the AiDER platform ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not access or use the Service. These Terms apply to all visitors, users, and others who access or use the Service.`,
   },
   {
     icon: Scale,
@@ -26,7 +26,7 @@ const SECTIONS = [
   {
     icon: CreditCard,
     title: '4. Payments & Fees',
-    content: `Customers agree to pay the fees displayed at the time of booking. Servify charges a platform fee of 10% on all transactions. Payments are processed securely via our payment partners. Refunds are issued in accordance with our cancellation policy. All prices are in USD unless otherwise stated.`,
+    content: `Customers agree to pay the fees displayed at the time of booking. AiDER charges a platform fee of 10% on all transactions. Payments are processed securely via our payment partners. Refunds are issued in accordance with our cancellation policy. All prices are in USD unless otherwise stated.`,
   },
   {
     icon: Shield,
@@ -41,7 +41,7 @@ const SECTIONS = [
   {
     icon: AlertCircle,
     title: '7. Limitation of Liability',
-    content: `To the maximum extent permitted by applicable law, Servify shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues. Our total liability for any claims under these Terms shall not exceed the amount paid by you to Servify in the twelve months preceding the claim.`,
+    content: `To the maximum extent permitted by applicable law, AiDER shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues. Our total liability for any claims under these Terms shall not exceed the amount paid by you to AiDER in the twelve months preceding the claim.`,
   },
 ];
 
@@ -89,7 +89,7 @@ export const TermsPage = ({ onNavigate }: TermsPageProps) => {
           style={{ background: 'var(--color-primary-light)', border: '1px solid color-mix(in srgb, var(--color-primary) 15%, transparent)' }}
         >
           <p className="text-sm leading-relaxed" style={{ color: 'var(--color-ink)' }}>
-            Welcome to Servify. These Terms of Service govern your use of our platform that connects customers with service professionals. Please read them carefully. By creating an account or using our services, you agree to these Terms.
+            Welcome to AiDER. These Terms of Service govern your use of our platform that connects customers with service professionals. Please read them carefully. By creating an account or using our services, you agree to these Terms.
           </p>
         </motion.div>
 
@@ -132,7 +132,7 @@ export const TermsPage = ({ onNavigate }: TermsPageProps) => {
               Have questions about our Terms?
             </p>
             <p className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>
-              Contact our legal team at legal@servify.com
+              Contact our legal team at legal@aider.com
             </p>
           </div>
           <div className="flex gap-2 shrink-0">

@@ -5,17 +5,21 @@
   --font-display: "Plus Jakarta Sans", sans-serif;
   --font-sans: "Inter", sans-serif;
 
-  /* ─── Brand Palette ─── */
-  --color-primary:          #84b701;
-  --color-primary-hover:    #739f00;
-  --color-primary-light:    #f0f8da;
-  --color-deep:             #003d2b;
-  --color-deep-hover:       #002d1f;
+  /* ─── Brand Palette (AiDER) ─── */
+  --color-primary:          #005B40;
+  --color-primary-hover:    #004a34;
+  --color-primary-light:    #e6f5f0;
+  --color-accent:           #D1F843;
+  --color-accent-hover:     #c2e63a;
+  --color-deep:             #005B40;
+  --color-deep-hover:       #004a34;
+  --color-cta:              #1F8FE8;
+  --color-cta-hover:        #1a7dd0;
 
   /* ─── Neutral Scale ─── */
   --color-neutral-0:    #ffffff;
-  --color-neutral-50:   #f7f8f7;
-  --color-neutral-100:  #eef0ee;
+  --color-neutral-50:   #f5f7f6;
+  --color-neutral-100:  #ECF0EF;
   --color-neutral-200:  #dde1db;
   --color-neutral-300:  #c4cac2;
   --color-neutral-400:  #9ca89a;
@@ -26,7 +30,7 @@
   --color-neutral-900:  #0f1a0e;
 
   /* ─── Semantic ─── */
-  --color-background:   #f7f8f7;
+  --color-background:   #ECF0EF;
   --color-surface:      #ffffff;
   --color-border:       #eaede9;
   --color-ink:          #101810;
@@ -41,6 +45,8 @@
   --color-deep-moss:          var(--color-deep);
   --color-deep-moss-dark:     var(--color-deep-hover);
   --color-primary-dark:       var(--color-primary-hover);
+  --color-lime:               var(--color-accent);
+  --color-blue-cta:           var(--color-cta);
 
   /* ─── Fluid Type Scale (320→1440) ─── */
   --text-xs:    clamp(0.6875rem, 0.66rem + 0.14vw, 0.75rem);
@@ -102,7 +108,8 @@
   --shadow-lg:  0 10px 20px -4px rgb(0 0 0 / 0.09), 0 4px 8px -4px rgb(0 0 0 / 0.06);
   --shadow-xl:  0 20px 40px -8px rgb(0 0 0 / 0.12), 0 8px 16px -6px rgb(0 0 0 / 0.08);
   --shadow-2xl: 0 32px 64px -12px rgb(0 0 0 / 0.18);
-  --shadow-green: 0 8px 24px -4px rgb(0 88 43 / 0.18);
+  --shadow-green: 0 8px 24px -4px rgb(0 91 64 / 0.22);
+  --shadow-cta:   0 8px 24px -4px rgb(31 143 232 / 0.25);
 
   /* ─── Transitions ─── */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -118,7 +125,7 @@
 
   /* Auth brand vars */
   --brand-deep: var(--color-deep);
-  --brand-lime: var(--color-primary);
+  --brand-lime: var(--color-accent);
   --bg-light: var(--color-neutral-50);
 }
 
@@ -412,7 +419,7 @@
 
   .overlay {
     background-color: var(--color-deep);
-    background-image: linear-gradient(150deg, #003d2b 0%, #005840 60%, #007a55 100%);
+    background-image: linear-gradient(150deg, #004a34 0%, #005B40 60%, #007a55 100%);
     color: #fff;
     position: relative;
     left: -100%;
@@ -537,8 +544,8 @@
 
   /* Provider accent */
   .provider-active .overlay {
-    background-color: var(--color-primary);
-    background-image: linear-gradient(150deg, #6a9400 0%, var(--color-primary) 60%, #a3d900 100%);
+    background-color: var(--color-accent);
+    background-image: linear-gradient(150deg, #b8e030 0%, var(--color-accent) 60%, #e0ff60 100%);
   }
   .provider-active .btn--ghost { border-color: rgba(255,255,255,0.5); }
   .provider-active .btn--action { background: var(--color-deep); border-color: var(--color-deep); }

@@ -97,7 +97,7 @@ export const Navbar = ({ screen, onNavigate, authStatus, user }: NavbarProps) =>
               className="text-base font-extrabold tracking-tight hidden sm:block"
               style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}
             >
-              Servify
+              AiDER
             </span>
           </button>
 

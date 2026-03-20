@@ -193,10 +193,10 @@ export const Home = ({ onNavigate, isAuthenticated }: HomeProps) => {
             </button>
           </div>
           <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full"
-            style={{ background: 'rgba(132,183,1,0.15)', filter: 'blur(20px)' }} />
+            style={{ background: 'rgba(209,248,67,0.15)', filter: 'blur(20px)' }} />
           <div className="absolute -right-4 bottom-0 h-20 w-20 rounded-full"
             style={{ background: 'rgba(255,255,255,0.05)' }} />
-          <Sparkles size={56} style={{ color: 'rgba(132,183,1,0.6)', position: 'relative', zIndex: 10 }} strokeWidth={1} />
+          <Sparkles size={56} style={{ color: 'rgba(209,248,67,0.6)', position: 'relative', zIndex: 10 }} strokeWidth={1} />
         </div>
 
         {/* Mobile Popular Services */}

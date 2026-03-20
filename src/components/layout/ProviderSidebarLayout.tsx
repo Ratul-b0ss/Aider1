@@ -52,11 +52,11 @@ export const ProviderSidebarLayout = ({
           <Star size={14} className="text-white" strokeWidth={2.5} />
         </div>
         <span className="text-base font-extrabold tracking-tight" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}>
-          Servify
+          AiDER
         </span>
         <span
           className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
-          style={{ background: 'var(--color-primary-light)', color: 'var(--color-deep)', fontFamily: 'var(--font-display)' }}
+          style={{ background: '#D1F843', color: '#005B40', fontFamily: 'var(--font-display)' }}
         >
           PRO
         </span>
@@ -78,7 +78,7 @@ export const ProviderSidebarLayout = ({
           <div className="h-1.5 rounded-full mb-1.5" style={{ background: 'rgba(255,255,255,0.2)' }}>
             <motion.div
               className="h-full rounded-full"
-              style={{ background: 'var(--color-primary)' }}
+              style={{ background: 'linear-gradient(90deg, #D1F843 0%, #005B40 100%)' }}
               initial={{ width: 0 }}
               animate={{ width: `${completionPct}%` }}
               transition={{ duration: 1, ease: 'easeOut' }}
@@ -282,7 +282,7 @@ export const ProviderSidebarLayout = ({
               <Star size={11} className="text-white" strokeWidth={2.5} />
             </div>
             <span className="text-sm font-extrabold" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}>
-              Servify
+              AiDER
             </span>
           </div>
 

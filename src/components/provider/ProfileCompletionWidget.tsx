@@ -80,7 +80,7 @@ export const ProfileCompletionWidget = ({ onNavigate }: ProfileCompletionWidgetP
         {/* Decorative orb */}
         <div
           className="absolute -right-8 -top-8 h-32 w-32 rounded-full pointer-events-none"
-          style={{ background: isComplete ? 'rgba(22,163,74,0.12)' : 'rgba(132,183,1,0.14)', filter: 'blur(20px)' }}
+          style={{ background: isComplete ? 'rgba(22,163,74,0.12)' : 'rgba(209,248,67,0.14)', filter: 'blur(20px)' }}
         />
 
         <div className="relative flex items-center gap-5">

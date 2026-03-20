@@ -47,7 +47,7 @@ export const ProviderProfile = ({ onLogout, onNavigate }: ProviderProfileProps) 
         }}
       >
         <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full pointer-events-none"
-          style={{ background: 'rgba(132,183,1,0.12)', filter: 'blur(40px)' }} />
+          style={{ background: 'rgba(209,248,67,0.12)', filter: 'blur(40px)' }} />
 
         <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-5">
           {/* Avatar */}
