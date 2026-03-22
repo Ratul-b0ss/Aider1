@@ -124,7 +124,7 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
 
       {/* HERO SECTION */}
       <section className="relative overflow-hidden"
-        style={{ background: '#ECF0EF', paddingBlock: 'clamp(4rem, 10vw, 7rem)' }}>
+        style={{ background: '#ECF0EF', paddingBlock: 'clamp(2.5rem, 6vw, 4rem)' }}>
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-20 -right-20 h-[380px] w-[380px] rounded-full opacity-[0.18]"
             style={{ background: '#D1F843', filter: 'blur(60px)' }} />
@@ -133,10 +133,10 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
         </div>
 
         <div className="mx-auto max-w-7xl px-5 lg:px-8 relative">
-          <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 xl:gap-14 items-center">
             <div>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }} className="space-y-7">
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }} className="space-y-5">
 
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold"
                   style={{ background: '#D1F843', color: '#005B40', fontFamily: 'var(--font-display)' }}>
@@ -149,15 +149,6 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
                     fontWeight: 800, color: '#005B40', letterSpacing: '-0.03em' }}>
                   Fast, reliable services<br />for any need.
                 </h1>
-
-                <div className="space-y-3">
-                  {['Verified & insured professionals', 'Same-day booking available', 'Secure payments & full protection'].map(text => (
-                    <div key={text} className="flex items-center gap-3">
-                      <CheckCircle size={18} style={{ color: '#D1F843' }} strokeWidth={2.5} fill="#005B40" />
-                      <span className="text-base font-medium" style={{ color: '#005B40' }}>{text}</span>
-                    </div>
-                  ))}
-                </div>
 
                 <button
                   onClick={() => onNavigate('signup')}
