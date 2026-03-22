@@ -72,34 +72,51 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
   return (
     <div className="w-full bg-white">
 
-      {/* NAVBAR */}
+      {/* NAVBAR — solid white, logo + auth buttons only */}
       <nav
         className="sticky top-0 z-50 w-full"
-        style={{ background: '#005B40', boxShadow: '0 2px 12px rgba(0,91,64,0.18)' }}
+        style={{
+          background: '#ffffff',
+          borderBottom: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+        }}
       >
         <div className="mx-auto max-w-7xl px-5 lg:px-8 flex h-16 items-center justify-between">
-          <span className="text-xl font-extrabold tracking-tight text-white"
-            style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
-            AiDER
-          </span>
-          <div className="hidden md:flex items-center gap-1">
-            {['How it Works', 'Services', 'For Providers', 'Help'].map(l => (
-              <button key={l} className="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/10"
-                style={{ color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--font-display)' }}>
-                {l}
-              </button>
-            ))}
+          {/* Logo */}
+          <div className="flex items-center gap-2.5">
+            <div
+              className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #005B40 0%, #00a86b 100%)' }}
+            >
+              <Star size={14} className="text-white" strokeWidth={2.5} />
+            </div>
+            <span
+              className="text-base font-extrabold tracking-tight"
+              style={{ fontFamily: 'var(--font-display)', color: '#111827', letterSpacing: '-0.02em' }}
+            >
+              AiDER
+            </span>
           </div>
+
+          {/* Auth Buttons */}
           <div className="flex items-center gap-2">
-            <button onClick={() => onNavigate('login')}
-              className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors hover:bg-white/10"
-              style={{ color: '#fff', fontFamily: 'var(--font-display)' }}>
+            <button
+              onClick={() => onNavigate('login')}
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors hover:bg-gray-50"
+              style={{ color: '#374151', fontFamily: 'var(--font-display)', border: '1px solid #d1d5db' }}
+            >
               Log In
             </button>
-            <button onClick={() => onNavigate('signup')}
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-              style={{ background: '#1F8FE8', fontFamily: 'var(--font-display)', boxShadow: '0 4px 14px rgba(31,143,232,0.35)' }}>
-              Get Started
+            <button
+              onClick={() => onNavigate('signup')}
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-gray-900"
+              style={{
+                background: '#111827',
+                color: '#ffffff',
+                fontFamily: 'var(--font-display)',
+              }}
+            >
+              Sign Up
             </button>
           </div>
         </div>
@@ -142,22 +159,16 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
                   ))}
                 </div>
 
-                <div>
-                  <p className="text-sm font-medium" style={{ color: '#005B40', opacity: 0.7 }}>Starting from</p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-lg" style={{ color: '#005B40' }}>$</span>
-                    <span className="font-extrabold leading-none"
-                      style={{ fontSize: 'clamp(3rem, 6vw, 4.5rem)', color: '#005B40', fontFamily: 'var(--font-display)' }}>
-                      15
-                    </span>
-                    <span className="text-lg font-medium" style={{ color: '#005B40' }}>/service</span>
-                  </div>
-                  <p className="text-sm mt-1" style={{ color: '#005B40', opacity: 0.6 }}>then flexible pricing per provider</p>
-                </div>
-
-                <button onClick={() => onNavigate('signup')}
-                  className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-bold text-white transition-all hover:opacity-90"
-                  style={{ background: '#1F8FE8', fontFamily: 'var(--font-display)', boxShadow: '0 8px 28px rgba(31,143,232,0.35)' }}>
+                <button
+                  onClick={() => onNavigate('signup')}
+                  className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-bold transition-all hover:bg-gray-900 hover:text-white"
+                  style={{
+                    background: 'transparent',
+                    color: '#111827',
+                    fontFamily: 'var(--font-display)',
+                    border: '2px solid #111827',
+                  }}
+                >
                   Get started
                   <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
                 </button>
