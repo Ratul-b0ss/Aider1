@@ -102,19 +102,19 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => onNavigate('login')}
-              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-[#005B40] hover:text-white hover:border-[#005B40]"
-              style={{ background: 'transparent', color: '#005B40', fontFamily: 'var(--font-display)', border: '1px solid #D1F843' }}
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-[#D1F843] hover:text-[#005B40] hover:border-[#D1F843]"
+              style={{ background: 'transparent', color: '#005B40', fontFamily: 'var(--font-display)', border: '1px solid #005B40' }}
             >
               Log In
             </button>
             <button
               onClick={() => onNavigate('signup')}
-              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-[#005B40] hover:text-white hover:border-[#005B40]"
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-[#D1F843] hover:text-[#005B40] hover:border-[#D1F843]"
               style={{
                 background: 'transparent',
                 color: '#005B40',
                 fontFamily: 'var(--font-display)',
-                border: '1px solid #D1F843',
+                border: '1px solid #005B40',
               }}
             >
               Sign Up
