@@ -25,13 +25,13 @@ const CATEGORIES = [
 const HOW_IT_WORKS_CUSTOMER = [
   { step: '01', title: 'Search & Browse', desc: 'Find from 100+ services by category, location or keyword.', color: '#D1F843' },
   { step: '02', title: 'Book Instantly',  desc: 'Select your time slot and pay securely in one tap.',        color: '#ffffff' },
-  { step: '03', title: 'Get It Done',     desc: 'A verified pro arrives on time. Rate when complete.',       color: '#005B40' },
+  { step: '03', title: 'Get It Done',     desc: 'A verified pro arrives on time. Rate when complete.',       color: '#1F8FE8' },
 ];
 
 const HOW_IT_WORKS_PROVIDER = [
   { step: '01', title: 'Create Profile',  desc: 'Set up your pro profile with skills, certs and ID.',     color: '#D1F843' },
   { step: '02', title: 'Post Your Gig',   desc: 'List your services with pricing and availability.',       color: '#ffffff' },
-  { step: '03', title: 'Earn & Grow',     desc: 'Accept bookings, collect payments, build your rating.',   color: '#005B40' },
+  { step: '03', title: 'Earn & Grow',     desc: 'Accept bookings, collect payments, build your rating.',   color: '#1F8FE8' },
 ];
 
 const TRUST_STATS = [
@@ -102,18 +102,19 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => onNavigate('login')}
-              className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors hover:bg-gray-50"
-              style={{ color: '#374151', fontFamily: 'var(--font-display)', border: '1px solid #d1d5db' }}
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-80 hover:shadow-md"
+              style={{ background: '#005B40', color: '#ffffff', fontFamily: 'var(--font-display)', border: '1px solid #005B40' }}
             >
               Log In
             </button>
             <button
               onClick={() => onNavigate('signup')}
-              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-gray-900"
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90 hover:shadow-md"
               style={{
-                background: '#111827',
+                background: '#005B40',
                 color: '#ffffff',
                 fontFamily: 'var(--font-display)',
+                border: '1px solid #005B40',
               }}
             >
               Sign Up
