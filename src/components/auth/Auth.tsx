@@ -107,9 +107,10 @@ export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
   );
 
   if (isMobile) {
+    const isProvider = userType === 'provider';
     return (
-      <main className={`relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[var(--bg-light)] ${userType === 'provider' ? 'provider-active' : ''}`}>
-        {/* Animated Background Orbs */}
+      <main className={`relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[var(--bg-light)] ${isProvider ? 'provider-active' : ''}`}>
+        {/* Animated Background Orbs — colour-coded by user type */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div 
             animate={{ 
@@ -118,7 +119,8 @@ export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
               y: isSignUp ? 20 : -20,
             }}
             transition={{ duration: 4, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
-            className="absolute -top-[10%] -left-[10%] h-[300px] w-[300px] rounded-full opacity-30 blur-[60px] bg-[var(--brand-deep)]"
+            className="absolute -top-[10%] -left-[10%] h-[300px] w-[300px] rounded-full opacity-30 blur-[60px]"
+            style={{ background: isProvider ? '#D1F843' : 'var(--brand-deep)' }}
           />
           <motion.div 
             animate={{ 
@@ -127,7 +129,8 @@ export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
               y: isSignUp ? -20 : 20,
             }}
             transition={{ duration: 5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: 1 }}
-            className="absolute top-[60%] -right-[10%] h-[300px] w-[300px] rounded-full opacity-30 blur-[60px] bg-[var(--brand-lime)]"
+            className="absolute top-[60%] -right-[10%] h-[300px] w-[300px] rounded-full opacity-30 blur-[60px]"
+            style={{ background: isProvider ? '#b8e030' : 'var(--brand-lime)' }}
           />
         </div>
 
@@ -165,7 +168,7 @@ export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
                     </button>
                   </div>
 
-                  <form onSubmit={(e) => handleAuth(e, true)} className="w-full !p-0">
+                  <form onSubmit={(e) => handleAuth(e, true)} className="mobile-auth-form">
                     <div className="field-group">
                       <input
                         type="text"
@@ -207,6 +210,7 @@ export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
                       whileTap={{ scale: 0.95 }}
                       type="submit" 
                       className="btn btn--action w-full mt-6"
+                      style={isProvider ? { background: '#1a1a2e', borderColor: '#1a1a2e', color: '#D1F843' } : {}}
                     >
                       Register as {userType}
                     </motion.button>
@@ -222,7 +226,7 @@ export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
 
                     <p className="mt-8 text-sm text-gray-500">
                       Already have an account?{' '}
-                      <button type="button" onClick={() => setIsSignUp(false)} className="font-bold text-[var(--brand-deep)] hover:underline">
+                      <button type="button" onClick={() => setIsSignUp(false)} className="font-bold hover:underline" style={{ color: 'var(--brand-deep)' }}>
                         Login
                       </button>
                     </p>
@@ -256,7 +260,7 @@ export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
                     </button>
                   </div>
 
-                  <form onSubmit={(e) => handleAuth(e, false)} className="w-full !p-0">
+                  <form onSubmit={(e) => handleAuth(e, false)} className="mobile-auth-form">
                     <div className="field-group">
                       <input
                         type="email"
@@ -288,6 +292,7 @@ export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
                       whileTap={{ scale: 0.95 }}
                       type="submit" 
                       className="btn btn--action w-full"
+                      style={isProvider ? { background: '#1a1a2e', borderColor: '#1a1a2e', color: '#D1F843' } : {}}
                     >
                       Login as {userType}
                     </motion.button>
@@ -303,7 +308,7 @@ export const Auth = ({ initialMode, onAuthSuccess, onNavigate }: AuthProps) => {
 
                     <p className="mt-8 text-sm text-gray-500">
                       Don't have an account?{' '}
-                      <button type="button" onClick={() => setIsSignUp(true)} className="font-bold text-[var(--brand-deep)] hover:underline">
+                      <button type="button" onClick={() => setIsSignUp(true)} className="font-bold hover:underline" style={{ color: 'var(--brand-deep)' }}>
                         Register
                       </button>
                     </p>

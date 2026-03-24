@@ -24,13 +24,13 @@ const CATEGORIES = [
 
 const HOW_IT_WORKS_CUSTOMER = [
   { step: '01', title: 'Search & Browse', desc: 'Find from 100+ services by category, location or keyword.', color: '#D1F843' },
-  { step: '02', title: 'Book Instantly',  desc: 'Select your time slot and pay securely in one tap.',        color: '#005B40' },
+  { step: '02', title: 'Book Instantly',  desc: 'Select your time slot and pay securely in one tap.',        color: '#ffffff' },
   { step: '03', title: 'Get It Done',     desc: 'A verified pro arrives on time. Rate when complete.',       color: '#1F8FE8' },
 ];
 
 const HOW_IT_WORKS_PROVIDER = [
   { step: '01', title: 'Create Profile',  desc: 'Set up your pro profile with skills, certs and ID.',     color: '#D1F843' },
-  { step: '02', title: 'Post Your Gig',   desc: 'List your services with pricing and availability.',       color: '#005B40' },
+  { step: '02', title: 'Post Your Gig',   desc: 'List your services with pricing and availability.',       color: '#ffffff' },
   { step: '03', title: 'Earn & Grow',     desc: 'Accept bookings, collect payments, build your rating.',   color: '#1F8FE8' },
 ];
 
@@ -314,13 +314,13 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
               {(activeTab === 'customer' ? HOW_IT_WORKS_CUSTOMER : HOW_IT_WORKS_PROVIDER).map((item, idx) => (
                 <motion.div key={item.step} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: idx * 0.1 }} className="relative rounded-2xl p-6"
-                  style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                  <div className="text-4xl font-black mb-4 leading-none"
-                    style={{ color: item.color, fontFamily: 'var(--font-display)', opacity: 0.6 }}>{item.step}</div>
+                  style={{ background: 'rgba(255,255,255,0.09)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                  <div className="text-5xl font-black mb-4 leading-none"
+                    style={{ color: item.color, fontFamily: 'var(--font-display)', opacity: 0.9 }}>{item.step}</div>
                   <h3 className="text-lg font-extrabold text-white mb-2" style={{ fontFamily: 'var(--font-display)' }}>{item.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>{item.desc}</p>
-                  {idx < 2 && <ChevronRight size={20} className="absolute -right-3 top-1/2 -translate-y-1/2 hidden md:block"
-                    style={{ color: 'rgba(255,255,255,0.2)' }} />}
+                  <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>{item.desc}</p>
+                  {idx < 2 && <ChevronRight size={22} className="absolute -right-4 top-1/2 -translate-y-1/2 hidden md:block z-10"
+                    style={{ color: 'rgba(255,255,255,0.5)' }} />}
                 </motion.div>
               ))}
             </motion.div>
