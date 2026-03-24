@@ -102,19 +102,19 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => onNavigate('login')}
-              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-80 hover:shadow-md"
-              style={{ background: '#005B40', color: '#ffffff', fontFamily: 'var(--font-display)', border: '1px solid #005B40' }}
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-[#005B40] hover:text-white hover:border-[#005B40]"
+              style={{ background: 'transparent', color: '#005B40', fontFamily: 'var(--font-display)', border: '1px solid #D1F843' }}
             >
               Log In
             </button>
             <button
               onClick={() => onNavigate('signup')}
-              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90 hover:shadow-md"
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-[#005B40] hover:text-white hover:border-[#005B40]"
               style={{
-                background: '#005B40',
-                color: '#ffffff',
+                background: 'transparent',
+                color: '#005B40',
                 fontFamily: 'var(--font-display)',
-                border: '1px solid #005B40',
+                border: '1px solid #D1F843',
               }}
             >
               Sign Up
@@ -330,7 +330,7 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
           <div className="text-center mt-10">
             <button onClick={() => onNavigate('signup')}
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all hover:opacity-90"
-              style={{ background: '#005B40', color: '#fff', fontFamily: 'var(--font-display)', boxShadow: '0 8px 24px rgba(0,91,64,0.35)' }}>
+              style={{ background: '#005B40', color: '#fff', fontFamily: 'var(--font-display)', border: '2px solid #005B40', boxShadow: '0 8px 24px rgba(0,91,64,0.35)' }}>
               {activeTab === 'customer' ? 'Find a Pro Now' : 'Start Earning Today'}
               <ArrowRight size={15} />
             </button>
