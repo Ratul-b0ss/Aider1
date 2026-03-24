@@ -25,13 +25,13 @@ const CATEGORIES = [
 const HOW_IT_WORKS_CUSTOMER = [
   { step: '01', title: 'Search & Browse', desc: 'Find from 100+ services by category, location or keyword.', color: '#D1F843' },
   { step: '02', title: 'Book Instantly',  desc: 'Select your time slot and pay securely in one tap.',        color: '#ffffff' },
-  { step: '03', title: 'Get It Done',     desc: 'A verified pro arrives on time. Rate when complete.',       color: '#1F8FE8' },
+  { step: '03', title: 'Get It Done',     desc: 'A verified pro arrives on time. Rate when complete.',       color: '#005B40' },
 ];
 
 const HOW_IT_WORKS_PROVIDER = [
   { step: '01', title: 'Create Profile',  desc: 'Set up your pro profile with skills, certs and ID.',     color: '#D1F843' },
   { step: '02', title: 'Post Your Gig',   desc: 'List your services with pricing and availability.',       color: '#ffffff' },
-  { step: '03', title: 'Earn & Grow',     desc: 'Accept bookings, collect payments, build your rating.',   color: '#1F8FE8' },
+  { step: '03', title: 'Earn & Grow',     desc: 'Accept bookings, collect payments, build your rating.',   color: '#005B40' },
 ];
 
 const TRUST_STATS = [
@@ -152,16 +152,16 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
 
                 <button
                   onClick={() => onNavigate('signup')}
-                  className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-bold transition-all hover:bg-gray-900 hover:text-white"
+                  className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-bold transition-all hover:scale-105 hover:shadow-lg"
                   style={{
-                    background: 'transparent',
-                    color: '#111827',
+                    background: '#005B40',
+                    color: '#ffffff',
                     fontFamily: 'var(--font-display)',
-                    border: '2px solid #111827',
+                    boxShadow: '0 4px 14px rgba(0,91,64,0.3)',
                   }}
                 >
                   Get started
-                  <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </motion.div>
             </div>
@@ -329,7 +329,7 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
           <div className="text-center mt-10">
             <button onClick={() => onNavigate('signup')}
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all hover:opacity-90"
-              style={{ background: '#1F8FE8', color: '#fff', fontFamily: 'var(--font-display)', boxShadow: '0 8px 24px rgba(31,143,232,0.35)' }}>
+              style={{ background: '#005B40', color: '#fff', fontFamily: 'var(--font-display)', boxShadow: '0 8px 24px rgba(0,91,64,0.35)' }}>
               {activeTab === 'customer' ? 'Find a Pro Now' : 'Start Earning Today'}
               <ArrowRight size={15} />
             </button>
@@ -398,7 +398,7 @@ export const GuestLanding = ({ onNavigate }: GuestLandingProps) => {
                 </p>
                 <button onClick={() => onNavigate('signup')}
                   className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                  style={{ background: '#1F8FE8', fontFamily: 'var(--font-display)', boxShadow: '0 4px 14px rgba(31,143,232,0.3)' }}>
+                  style={{ background: '#005B40', fontFamily: 'var(--font-display)', boxShadow: '0 4px 14px rgba(0,91,64,0.3)' }}>
                   Hire a Pro <ArrowRight size={14} />
                 </button>
               </div>
