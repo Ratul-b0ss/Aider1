@@ -171,7 +171,7 @@ export default function App() {
       <GlobalErrorBoundary>
         <ProviderContextProvider>
           <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-background)' }}>
-            <Navbar screen={screen} onNavigate={navigate} authStatus={authStatus} user={user} />
+            <Navbar screen={screen} onNavigate={navigate} authStatus={authStatus} user={user} onLogout={handleLogout} />
             <main className="flex-1">
               <AnimatePresence mode="wait">
                 <motion.div key={screen} {...pageTransition}>
@@ -213,7 +213,7 @@ export default function App() {
     <GlobalErrorBoundary>
       <ProviderContextProvider>
         <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-background)' }}>
-          <Navbar screen={screen} onNavigate={navigate} authStatus={authStatus} user={user} />
+          <Navbar screen={screen} onNavigate={navigate} authStatus={authStatus} user={user} onLogout={handleLogout} />
           <main className="flex-1">
             <CustomerLayout screen={screen}>
               <AnimatePresence mode="wait">

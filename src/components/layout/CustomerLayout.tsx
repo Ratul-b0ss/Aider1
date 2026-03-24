@@ -7,7 +7,8 @@ interface CustomerLayoutProps {
 }
 
 // Screens that should NOT have max-width / padding wrapping
-const FULL_BLEED: Screen[] = ['service-detail', 'booking-checkout', 'order-tracking'];
+// 'home' is full-bleed because CustomerDashboard manages its own layout internally
+const FULL_BLEED: Screen[] = ['home', 'service-detail', 'booking-checkout', 'order-tracking'];
 
 export const CustomerLayout = ({ screen, children }: CustomerLayoutProps) => {
   if (FULL_BLEED.includes(screen)) {

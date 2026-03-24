@@ -13,6 +13,7 @@ interface NavbarProps {
   onNavigate: (s: Screen) => void;
   authStatus: AuthStatus;
   user: AuthUser | null;
+  onLogout?: () => void;
 }
 
 // ── Customer-only essential links ─────────────────────────────────────────────
@@ -22,15 +23,15 @@ const CUSTOMER_LINKS = [
   { label: 'Profile',     screen: 'profile'  as Screen, icon: User },
 ];
 
-export const Navbar = ({ screen, onNavigate, authStatus, user }: NavbarProps) => {
+export const Navbar = ({ screen, onNavigate, authStatus, user, onLogout }: NavbarProps) => {
   // Providers never see this navbar — rendered null below
   if (authStatus === 'provider') return null;
 
-  return <NavbarInner screen={screen} onNavigate={onNavigate} authStatus={authStatus} user={user} />;
+  return <NavbarInner screen={screen} onNavigate={onNavigate} authStatus={authStatus} user={user} onLogout={onLogout} />;
 };
 
 // ── Inner impl (only guest + customer) ───────────────────────────────────────
-const NavbarInner = ({ screen, onNavigate, authStatus, user }: NavbarProps) => {
+const NavbarInner = ({ screen, onNavigate, authStatus, user, onLogout }: NavbarProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -195,7 +196,7 @@ const NavbarInner = ({ screen, onNavigate, authStatus, user }: NavbarProps) => {
 
                         <div className="border-t border-gray-100" />
                         <button
-                          onClick={() => setProfileOpen(false)}
+                          onClick={() => { setProfileOpen(false); onLogout?.(); }}
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50"
                           style={{ fontFamily: 'var(--font-display)' }}
                         >

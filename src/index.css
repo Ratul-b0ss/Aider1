@@ -316,7 +316,7 @@
   .field-group {
     position: relative;
     width: 100%;
-    margin-bottom: var(--space-4);
+    margin-bottom: 1.75rem; /* extra room for validation error messages below */
   }
 
   .field-group__input {
@@ -457,17 +457,31 @@
     line-height: 1.15;
     font-size: clamp(1.75rem, 3.5vw, 3rem);
     letter-spacing: -0.02em;
+    color: #fff;
   }
 
   .auth-sidebar__text {
     font-size: clamp(0.875rem, 1.2vw, 1rem);
     line-height: 1.65;
-    opacity: 0.8;
+    opacity: 0.85;
     max-width: 28ch;
+    color: #fff;
   }
 
-  /* Auth form layout */
-  form { width: 100%; max-width: 400px; padding: 0 36px; text-align: center; }
+  /* Auth form layout — desktop uses fixed padding, mobile uses !p-0 override */
+  .form-container form {
+    width: 100%;
+    max-width: 400px;
+    padding: 0 clamp(16px, 5vw, 36px);
+    text-align: center;
+  }
+  /* Mobile card form strips all extra padding so it fills the card */
+  form.mobile-auth-form {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    text-align: center;
+  }
   .auth-header__title {
     font-size: clamp(1.75rem, 3vw, 2.5rem);
     font-family: var(--font-display);
@@ -478,11 +492,12 @@
   }
 
   .forgot-link {
-    display: inline-block;
-    margin: 8px 0 16px;
+    display: block;
+    text-align: right;
+    margin: 4px 0 16px;
     color: var(--color-ink-muted);
     text-decoration: none;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     transition: color var(--t-fast);
   }
@@ -491,12 +506,13 @@
   /* Auth toggle pill */
   .auth-toggle {
     display: flex;
-    background: var(--color-neutral-100);
+    background: var(--color-neutral-200);
     padding: 4px;
     border-radius: var(--radius-lg);
     margin-bottom: 1.5rem;
     width: 100%;
     gap: 4px;
+    border: 1px solid var(--color-border);
   }
   .auth-toggle__btn {
     flex: 1;
@@ -542,15 +558,7 @@
     box-shadow: var(--shadow-sm);
   }
 
-  /* Provider accent */
-  .provider-active .overlay {
-    background-color: var(--color-accent);
-    background-image: linear-gradient(150deg, #b8e030 0%, var(--color-accent) 60%, #e0ff60 100%);
-  }
-  .provider-active .btn--ghost { border-color: rgba(255,255,255,0.5); }
-  .provider-active .btn--action { background: var(--color-deep); border-color: var(--color-deep); }
-
-  /* Auth button fills */
+  /* ─── Auth Action Button (customer mode = brand green) ─── */
   .btn--action {
     background: var(--color-primary);
     color: #fff;
@@ -561,13 +569,15 @@
     font-weight: 700;
     font-size: 0.875rem;
     letter-spacing: 0.02em;
-    transition: background var(--t-fast), box-shadow var(--t-fast);
+    transition: background var(--t-fast), box-shadow var(--t-fast), color var(--t-fast), border-color var(--t-fast);
     box-shadow: var(--shadow-sm);
   }
   .btn--action:hover {
     background: var(--color-primary-hover);
     box-shadow: var(--shadow-md);
   }
+
+  /* ─── Overlay ghost button (white bordered, on the sliding panel) ─── */
   .btn--ghost {
     background: transparent;
     border: 1.5px solid rgba(255,255,255,0.6);
@@ -577,11 +587,50 @@
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 0.875rem;
-    transition: background var(--t-fast), border-color var(--t-fast);
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
   }
   .btn--ghost:hover {
     background: rgba(255,255,255,0.12);
     border-color: rgba(255,255,255,0.9);
+  }
+
+  /* ─── Provider mode: lime-yellow overlay, dark action button ─── */
+  /* Overlay background switches to lime-yellow gradient */
+  .provider-active .overlay {
+    background-color: var(--color-accent);
+    background-image: linear-gradient(150deg, #b8e030 0%, var(--color-accent) 60%, #e0ff60 100%);
+    color: var(--color-deep);
+  }
+  /* Overlay text turns deep-green on lime-yellow bg */
+  .provider-active .auth-sidebar__title,
+  .provider-active .auth-sidebar__text {
+    color: var(--color-deep);
+  }
+  /* Ghost button on lime overlay needs dark border + text */
+  .provider-active .btn--ghost {
+    border-color: rgba(0, 50, 20, 0.35);
+    color: var(--color-deep);
+  }
+  .provider-active .btn--ghost:hover {
+    background: rgba(0, 91, 64, 0.12);
+    border-color: var(--color-deep);
+  }
+  /* Action button (Register / Login) → dark charcoal with lime text in provider mode */
+  .provider-active .btn--action {
+    background: #1a1a2e !important;
+    border-color: #1a1a2e !important;
+    color: #D1F843 !important;
+  }
+  .provider-active .btn--action:hover {
+    background: #0f0f1a !important;
+    border-color: #0f0f1a !important;
+    box-shadow: 0 4px 16px rgba(209,248,67,0.25);
+  }
+  /* Auth toggle pill: active state stays readable in provider mode */
+  .provider-active .auth-toggle__btn.active {
+    background: #fff;
+    color: var(--color-deep);
+    box-shadow: var(--shadow-sm);
   }
 }
 
